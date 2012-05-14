@@ -1,0 +1,17 @@
+Aihe: A*
+
+Tarkoituksena on toteuttaa ohjelma, joka löytää lyhimmän 
+reitin 2-ulotteisen ruudukon kahden ruudun välillä. 
+
+Osa ruuduista on esteitä joiden kautta ei voi kulkea.
+Etsintä suoritetaan A*-algoritmilla (A Star).
+
+Liikkuminen on sallittua jos seuraavat ehdot täyttyvät:
+- Kohderuutu on lähtöruudun yksi kahdeksasta naapurista
+- Kohderuutu ei ole esteruutu
+- Kummankaan ruudun yhteinen naapuri ei ole esteruutu
+
+Liikkumisen kustannus:
+- pystysuuntaan 1
+- vaakasuuntaan 1
+- vinoittain sqrt(2) eli noin 1.41
