@@ -11,6 +11,8 @@ package tiralab;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
 import javax.imageio.ImageIO;
 // ...
 public class Verkko {
@@ -23,8 +25,8 @@ public class Verkko {
     public int leveys;
     private Solmu[][] solmut;
     
-    private int lahtö_1;
-    private int lahtö_2;
+    private int lähtö_1;
+    private int lähtö_2;
     private int maali_1;
     private int maali_2;
     // ...
@@ -33,6 +35,7 @@ public class Verkko {
         try {
             kuva = ImageIO.read(new File(tiedosto));
         } catch (IOException ex) {
+            ex.printStackTrace();
             System.exit(0);
         }
         korkeus = kuva.getHeight();
@@ -46,22 +49,36 @@ public class Verkko {
         for ( int j=0; j<korkeus; j++ ){            
             for ( int i=0; i<leveys; i++ ) {
                 int pikseli = kuva.getRGB(i, j);
-                if (pikseli==VALKEA) {
+                if (pikseli==VALKEA) { // Löytyy
+                    //System.out.println("Valkea");
                     verkko[j][i] = 0;
                 }
-                else if (pikseli==MUSTA)
+                else if (pikseli==MUSTA){ // Löytyy
+                    //System.out.println("Musta");
                     verkko[j][i] = 1;
-                else if (pikseli==LAHTO ) {
-                    lahtö_1 = i;
-                    lahtö_2 = j;
+                } else if (pikseli==LAHTO ) {
+                    System.out.println("Lähtö"); //Löytyy
+                    lähtö_1 = i;
+                    lähtö_2 = j;
                 }
-                else if (pikseli==MAALI )
+                else if (pikseli==MAALI ){
+                    System.out.println("Maali"); //Löytyy
                     maali_1 = i;
                     maali_2 = j;
+                } else{
+                    System.out.println(pikseli);
                 }
+                
             }          
         }
-            // ...
+        System.out.println("Leveys/korkeus: " + verkko.length + "/" + verkko[0].length );
+        Collection<Integer> värit = new HashSet<Integer>();
+        for (int m=0; m < verkko.length; m++)
+            for (int n=0; n < verkko[0].length;n++){
+                if (värit.add(verkko[m][n]))
+                    System.out.println(m + "/" + n + " " + kuva.getRGB(m, n));
+            }
+        
     }
     // ...
 }
