@@ -15,3 +15,20 @@ Liikkumisen kustannus:
 - pystysuuntaan 1
 - vaakasuuntaan 1
 - vinoittain sqrt(2) eli noin 1.41
+
+Pseudokoodi TiRa-materiaalista:
+Astar(G,w,a,b)
+// G tutkittava verkko, a lähtösolmu, b kohdesolmu ja w kaaripainot kertova funktio
+for kaikille solmuille v 2 V
+    alkuun[v] = 1 
+    loppuun[v] = arvioi suora etäisyys v ; b
+    polku[v] = NIL
+    alkuun[a] = 0
+    S = ; 
+    while ( solmu b ei ole vielä joukossa S )
+        valitse solmu u 2 V \ S, jolle alkuun[v]+loppuun[v] on pienin
+        S = S [ {u}
+        for jokaiselle solmulle v 2 Adj[u] // kaikille u:n vierussolmuille v
+            if alkuun[v] > alkuun[u] + w(u,v)
+                alkuun[v] = alkuun[u]+w(u,v)
+            polku[v] = u

@@ -14,6 +14,7 @@ public class TiraLab {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Verkko ver = new Verkko("/cs/fs/home/mtkortel/maze.bmp");
+        //Verkko ver = new Verkko("/cs/fs/home/mtkortel/maze.bmp");
+        Verkko ver = new Verkko("C:\\Users\\mkortelainen.SECURITAS\\Documents\\NetBeansProjects\\TiraLab\\TiraLab\\src\\kuva.gif");
     }
 }
