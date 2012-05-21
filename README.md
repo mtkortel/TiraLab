@@ -1,4 +1,5 @@
 TiraLab
 =======
 
-Markon TiRa labran
+Markon TiRa labran git repository
+
