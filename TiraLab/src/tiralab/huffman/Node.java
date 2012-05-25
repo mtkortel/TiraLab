@@ -22,6 +22,7 @@ public class Node {
     private Node vasen;
     private Node oikea;
     private boolean lehti;
+    private String bits;
     /**
      * Konstruktori binääräpuun lehdelle
      */
@@ -103,6 +104,13 @@ public class Node {
      */
     public boolean isLehti() {
         return lehti;
+    }
+
+    void setBits(String merkki) {
+        this.bits = merkki;
+    }
+    public String getBits(){
+        return bits;
     }
 
     
