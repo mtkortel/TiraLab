@@ -15,40 +15,22 @@ import java.util.*;
 public class Pakkaaja {
     
     Comparator<Node> comparator = new NodeComparator();
-    static int MerkkienMäärä = 256;
+    int MerkkienMäärä = 256;
     HashMap<String, Node> nodes;
+    String tiedosto = "";
     
-    public static void main(String[] args){
-        Pakkaaja pakkaaja = new Pakkaaja();
-        pakkaaja.nodes = new HashMap<String, Node>();
-        /*
-        if (args.length != 2){
-            System.out.println("compress  : Pakkaaja + tiedosto.txt");
-            System.out.println("uncompress: Pakkaaja - tiedosto.txt");
-            System.exit(-1);
-        }
-        String mode = args[0];
-        String tiedosto = args[1];
-        */
-        String mode = "+";
-        String tiedosto = "tiedosto.txt";
+    private BitSet merkit;
+    
+    public Pakkaaja(String tiedosto){
+        nodes = new HashMap<String, Node>();
+        merkit = new BitSet(MerkkienMäärä);
         
+        this.tiedosto = tiedosto;
+        pakataan(tiedosto);
         
-            if (mode.equals("-")){
-                pakkaaja.puretaan(tiedosto);
-            } else 
-                pakkaaja.pakataan(tiedosto);
     }
-    /**
-     * Metodi lukee tiedoston tavuina
-     * 
-     * @param tiedosto
-     * @throws FileNotFoundException 
-     */
-    private void luePurettavaTiedosto(String tiedosto) throws FileNotFoundException{
-        ///TODO: Tutki RandomAccessFileä
-        InputStream is = new FileInputStream(tiedosto);
-    }
+    
+    
     /**
      * Metodi lukee tiedoston riveittäin
      * 
@@ -58,7 +40,7 @@ public class Pakkaaja {
      */
     private String lueTekstiTiedosto(String tiedosto) throws FileNotFoundException, IOException {
         File file = new File(tiedosto);
-        //System.out.println("Hakemisto: " + file.getCanonicalPath());
+        System.out.println("Hakemisto: " + file.getCanonicalPath());
         
         Scanner lukija = new Scanner(new FileInputStream(tiedosto), "UTF-8");
         String rivi = "";
@@ -66,7 +48,7 @@ public class Pakkaaja {
 
         try {
             while (lukija.hasNextLine()){
-                rivi += lukija.nextLine() + vaihto;
+                rivi += lukija.nextLine();// + vaihto;
             }
         } finally{
             lukija.close();
@@ -99,8 +81,10 @@ public class Pakkaaja {
         PriorityQueue<Node> queue = new PriorityQueue<Node>(1, comparator); 
         // Lisätään jonoon kaikki puun lehdet
         for (char i = 0; i < MerkkienMäärä; i++)
-            if (kerrat[i] > 0)
+            if (kerrat[i] > 0){
                 queue.add(new Node(i, kerrat[i]));
+                merkit.set(i);
+            }
         
         // Tehdään niin kauan kunnes jonossa on vain yksi jäljellä eli root
         while (queue.size() > 1){
@@ -113,18 +97,7 @@ public class Pakkaaja {
         return queue.remove();
     }
 
-    /**
-     * Tiedoston purun tekevä metodi
-     * @param tiedosto 
-     */
-    private void puretaan(String tiedosto) {
-        try{
-            luePurettavaTiedosto(tiedosto);
-        } catch(Exception e){
-            e.getMessage();
-            e.printStackTrace();
-        }
-    }
+ 
     /**
      * Tiedoston pakkaamisesta vastaava metodi
      * @param tiedosto 
@@ -138,10 +111,9 @@ public class Pakkaaja {
             tulostaPuu(huffman, "0");
             System.out.println("");
             tulostaTiedosto(teksti, huffman);
-            
+            tulostaPuu2(huffman, "0");
         } catch (Exception e){
             e.getMessage();
-            e.printStackTrace();
         }
     }
   
@@ -156,7 +128,7 @@ public class Pakkaaja {
             huffman.setBits(merkki);
             nodes.put(String.valueOf(huffman.getMerkki()), huffman);
             return;
-        }
+        } 
         tulostaPuu(huffman.getVasen(), merkki + "0");
         tulostaPuu(huffman.getOikea(), merkki + "1");
     }
@@ -172,10 +144,12 @@ public class Pakkaaja {
             Node n = nodes.get(String.valueOf(c));
             jono += n.getBits() + " ";
         }
+        
         System.out.println("Alkuperäinen teksti");
         System.out.println(alkuperäinen);
         System.out.println("Koodattu teksti");
         System.out.println(jono);
+        kirjoitaPuu(huffman);
     }
     private String etsiMerkki(char merkki, Node puu, String koodi){
         try{
@@ -201,9 +175,73 @@ public class Pakkaaja {
             huffman.setBits(merkki);
             return huffman;
         }
-        tulostaPuu(huffman.getVasen(), merkki + "0");
-        tulostaPuu(huffman.getOikea(), merkki + "1"); 
+        haeNodet(huffman.getVasen(), merkki + "0");
+        haeNodet(huffman.getOikea(), merkki + "1"); 
         return null;
     }
-    
+
+    /**
+     * Tulostaa puun ---- TESTIVERSIO
+     * @param huffman 
+     */
+    private void tulostaPuu2(Node huffman, String merkki) {
+        ///TODO: Ei toimi vielä
+        
+        /*
+         * String number = "01010010"; //the bin way
+         * byte numberByte = (byte) Integer.parseInt(number, 2); //so mode 2
+         * System.out.println(numberByte);
+         */
+        BitSet setti = new BitSet(8);
+        BitSet setti2 = new BitSet(8);
+        if (huffman.isLehti()){
+            for(int i = 0; i < merkki.length(); i++){
+                int ii = Integer.parseInt(String.valueOf(merkki.charAt(i)));
+                if (ii == 0){
+                    setti.set(ii, false);
+                } else {
+                    setti.set(ii, true);
+                }
+            }
+                    
+            System.out.print(setti);
+            setti2.set(huffman.getMerkki());
+            System.out.print(setti2);
+            System.out.print("    ");
+            //System.out.println(huffman.getMerkki()+ " - " + merkki + " - " + huffman.getMäärä());
+            //huffman.setBits(merkki);
+            //nodes.put(String.valueOf(huffman.getMerkki()), huffman);
+            System.out.println(huffman.getMerkki() + " " + merkki);
+            return;
+        } else {
+            //setti.set(0, true);
+            //System.out.print(setti);
+        }
+        tulostaPuu2(huffman.getVasen(), merkki + "0");
+        tulostaPuu2(huffman.getOikea(), merkki + "1");
+    }
+    private void kirjoitaPuu(Node puu){
+        int pos = tiedosto.indexOf(".");
+        if (pos < 0){
+            // ei pistettä
+            pos = tiedosto.length();
+        }
+        String utied = tiedosto.substring(0, pos) + ".huf";
+        //System.out.println("Tiedosto:  " + tiedosto);
+        //System.out.println("Kirjoitus: " + utied);
+        
+        System.out.println("Käytetyt merkit bitteinä: ");
+        System.out.println(merkit);
+        /*
+         * 
+        try{
+            File file = new File(utied);
+            FileOutputStream ulos = new FileOutputStream(file);
+            
+        } catch (Exception e){
+            e.getMessage();
+        }
+        * 
+        */
+    }
 }
