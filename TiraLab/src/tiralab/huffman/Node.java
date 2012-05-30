@@ -30,6 +30,7 @@ public class Node {
         this.lehti = true;
         this.merkki = merkki;
         this.määrä  = määrä;
+        this.lehti = true;
     }
     /**
      * Konstruktori binääripuulle, ei lehdelle
@@ -39,6 +40,7 @@ public class Node {
         this.vasen = vasen;
         this.oikea = oikea;
         this.määrä = vasen.getMäärä() + oikea.getMäärä();
+        this.lehti = false;
     }
     
     
