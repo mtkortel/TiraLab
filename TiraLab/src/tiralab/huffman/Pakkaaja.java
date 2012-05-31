@@ -5,6 +5,7 @@
 package tiralab.huffman;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -19,6 +20,7 @@ public class Pakkaaja {
     HashMap<String, Node> nodes;
     String tiedosto = "";
     List<Byte> code;
+    String temppi="";
     
     private BitSet merkit;
     
@@ -41,11 +43,11 @@ public class Pakkaaja {
      */
     private String lueTekstiTiedosto(String tiedosto) throws FileNotFoundException, IOException {
         File file = new File(tiedosto);
-        System.out.println("Hakemisto: " + file.getCanonicalPath());
+        //System.out.println("Hakemisto: " + file.getCanonicalPath());
         
         Scanner lukija = new Scanner(new FileInputStream(tiedosto), "UTF-8");
         String rivi = "";
-        String vaihto = System.getProperty("line.separator");
+        //String vaihto = System.getProperty("line.separator");
 
         try {
             while (lukija.hasNextLine()){
@@ -54,7 +56,7 @@ public class Pakkaaja {
         } finally{
             lukija.close();
         }
-        System.out.println(rivi);
+        //System.out.println(rivi);
         return rivi;
         
     }
@@ -110,29 +112,34 @@ public class Pakkaaja {
             // Tiedosto luettu loppuun rakennetaan puu
             Node huffman  = rakennaPuu(kerrat);
             tulostaPuu(huffman, "0");
-            System.out.println("");
+            //System.out.println("");
             List<Byte> koodia = new ArrayList<Byte>();
             koodia = tulostaTiedosto(teksti, huffman, koodia);
-            System.out.println("Header osio");
+            //System.out.println("Header osio");
             code = new ArrayList<Byte>();
             tulostaPuu2(huffman, "0");
+            /*
             System.out.println("Tällainen merkit ja koodit");
             for(Byte b: code){
                 System.out.print(b);
             }
+            */
             code.add(Byte.MAX_VALUE);
             code.add(Byte.MAX_VALUE);
+            /*
             System.out.println();
             System.out.println("Tällainen välimerkki");
             for(Byte b: code){
                 System.out.print(b);
             }
+            * 
+            */
             code.addAll(koodia);
-            System.out.println();
-            System.out.println("Tällainen lopullinen");
-            for(Byte b: code){
-                System.out.print(b);
-            }
+            //System.out.println();
+            //System.out.println("Tällainen lopullinen");
+            //for(Byte b: code){
+              //  System.out.print(b);
+            //}
             
         } catch (Exception e){
             e.printStackTrace();
@@ -168,14 +175,23 @@ public class Pakkaaja {
             jono += n.getBits() + " ";
             text.add((byte) Integer.parseInt(n.getBits(), 2));
         }
-        
+        /*
         System.out.println("Alkuperäinen teksti");
         System.out.println(alkuperäinen);
+        System.out.println("Koko: " + alkuperäinen.length());
         System.out.println("Koodattu teksti");
-        System.out.println(jono);
-        kirjoitaPuu(huffman);
+        */
+        //System.out.println(jono.replaceAll(" ", ""));
+        
+        //System.out.println("Koko: " + jono.length());
+        
+        
+        temppi = jono.replaceAll("" , "");
+        //kirjoitaPuu(huffman);
         return text;
     }
+    
+    /*
     private String etsiMerkki(char merkki, Node puu, String koodi){
         try{
         if (puu.isLehti()){
@@ -192,8 +208,8 @@ public class Pakkaaja {
             
         }
         return "";
-    }
-
+    }*/
+/*
     private Node haeNodet(Node huffman , String merkki) {
         if (huffman.isLehti()){
             System.out.println(huffman.getMerkki()+ " - " + merkki + " - " + huffman.getMäärä());
@@ -204,11 +220,12 @@ public class Pakkaaja {
         haeNodet(huffman.getOikea(), merkki + "1"); 
         return null;
     }
-
+*/
     /**
      * Tulostaa puun ---- TESTIVERSIO
      * @param huffman 
      */
+    
     private void tulostaPuu2(Node huffman, String merkki) {
         if (huffman.isLehti()){
             byte merkki_byte = (byte) (int)huffman.getMerkki();
@@ -225,6 +242,7 @@ public class Pakkaaja {
         tulostaPuu2(huffman.getVasen(), merkki + "0");
         tulostaPuu2(huffman.getOikea(), merkki + "1");
     }
+    /*
     private void kirjoitaPuu(Node puu){
         int pos = tiedosto.indexOf(".");
         if (pos < 0){
@@ -237,19 +255,14 @@ public class Pakkaaja {
         
         System.out.println("Käytetyt merkit bitteinä: ");
         System.out.println(merkit);
-        /*
-         * 
-        try{
-            File file = new File(utied);
-            FileOutputStream ulos = new FileOutputStream(file);
-            
-        } catch (Exception e){
-            e.getMessage();
-        }
-        * 
-        */
     }
-
+    */
+    
+    /**
+     * Tulostaa pakatun tiedoston ja näyttää ko'ot
+     * 
+     * @param tiedosto 
+     */
     private void kirjoita(String tiedosto) {
         int pos = tiedosto.indexOf(".");
         if (pos < 0){
@@ -259,38 +272,60 @@ public class Pakkaaja {
         String utied = tiedosto.substring(0, pos) + ".huf";
         try{
             File file = new File(utied);
-            FileWriter fw = new FileWriter(file);
-            BufferedWriter bw = new BufferedWriter(fw);
-            StringBuffer sb = new StringBuffer();
-            int i=0;
+            FileOutputStream fs = new FileOutputStream(utied);
+            ObjectOutputStream os = new ObjectOutputStream(fs);
+            int j=0;
             BitSet bitit = new BitSet(8);
-            for(byte b: code){
-                //bw.write(b);
-                String jono = Integer.toBinaryString(Integer.parseInt(Byte.toString(b)));
-                char[] arr = jono.toCharArray();
-                for(char c: arr){
-                    if (c==0){
-                        bitit.set(i, false);
-                    } else
-                        bitit.set(i, true);
-                    i++;
-                    if (i==8){
-                        //bw.append(bitit);
-                    }
+            boolean vielä = true;
+            String tmp1 = temppi;
+            String tmp2 = "";
+            //System.out.println("Jotain");
+            while(vielä){
+                if (tmp1.length()>=8){
+                    tmp2 = tmp1.substring(0, 7);
+                    tmp1 = tmp1.substring(8);
+                } else {
+                    tmp2 = tmp1;
+                    vielä=false;
                 }
-                
-                
-                System.out.println("Byte: " + String.valueOf(b));
-                System.out.println(Integer.toBinaryString(Integer.parseInt(Byte.toString(b))));
+                for(int i = 0; i < tmp2.length(); i++){
+                    if (tmp2.charAt(i) == '1'){
+                        bitit.set(i, true);
+                    } else 
+                        bitit.set(i, false);
+                }
+                byte[] arr = toByteArray(bitit);
+                os.write(arr);
             }
-            System.out.println("SB: " + sb.toString());
-            bw.close();
+            
             System.out.println();
-            System.out.println("Pakatun tiedoston koko       : " + file.length());
+            long pakattu = file.length();
+            
             file = new File(tiedosto);
-            System.out.println("Pakkaamattoman tiedoston koko: " + file.length());
+            long alkup = file.length();
+            double ero = 1.0*pakattu/alkup*100;
+            DecimalFormat df = new DecimalFormat("##.##");
+            System.out.println("Pakkaamattoman tiedoston koko: " + alkup);
+            System.out.println("Pakatun tiedoston koko       : " + pakattu);
+            System.out.println("Koko alkuperäisestä          : " + df.format(ero) +"%");
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
+    }
+    
+    /**
+     * Muuttaa BitSetin bittitaulukoksi
+     * 
+     * @param bits
+     * @return 
+     */
+    public byte[] toByteArray(BitSet bits) {
+        byte[] bytes = new byte[bits.length()/8+1];
+        for (int i=0; i<bits.length(); i++) {
+            if (bits.get(i)) {
+                bytes[bytes.length-i/8-1] |= 1<<(i%8);
+            }
+        }
+        return bytes;
     }
 }

@@ -38,12 +38,11 @@ public class NodeTest {
     @Test
     public void testGetMäärä() {
         //System.out.println("getM\u00e4\u00e4r\u00e4");
-        Node instance = null;
-        int expResult = 0;
+        Node instance = new Node('c', 2);
+        int expResult = 2;
         int result = instance.getMäärä();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertTrue(expResult == result);
+        
     }
 
     /**
@@ -53,10 +52,9 @@ public class NodeTest {
     public void testSetMäärä() {
         //System.out.println("setM\u00e4\u00e4r\u00e4");
         int määrä = 0;
-        Node instance = null;
+        Node instance = new Node('c', 2);
         instance.setMäärä(määrä);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertTrue(instance.getMäärä() == määrä);
     }
 
     /**
@@ -65,12 +63,10 @@ public class NodeTest {
     @Test
     public void testGetMerkki() {
         //System.out.println("getMerkki");
-        Node instance = null;
-        char expResult = ' ';
+        Node instance = new Node('c', 2);
+        char expResult = 'c';
         char result = instance.getMerkki();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertTrue(result == expResult);
     }
 
     /**
@@ -80,10 +76,9 @@ public class NodeTest {
     public void testSetMerkki() {
         //System.out.println("setMerkki");
         char merkki = ' ';
-        Node instance = null;
+        Node instance = new Node('c', 2);
         instance.setMerkki(merkki);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertTrue(instance.getMerkki() == merkki);
     }
 
     /**
@@ -92,12 +87,12 @@ public class NodeTest {
     @Test
     public void testGetVasen() {
         //System.out.println("getVasen");
-        Node instance = null;
-        Node expResult = null;
+        Node instance3 = new Node('d', 3);
+        Node instance2 = new Node('c', 2);
+        Node instance = new Node(instance2, instance3);
+        Node expResult = new Node('c', 2);
         Node result = instance.getVasen();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertTrue(result.getMerkki() == expResult.getMerkki());
     }
 
     /**
@@ -105,12 +100,13 @@ public class NodeTest {
      */
     @Test
     public void testSetVasen() {
-        //System.out.println("setVasen");
-        Node vasen = null;
-        Node instance = null;
-        instance.setVasen(vasen);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+         //System.out.println("getVasen");
+        Node instance3 = new Node('d', 3);
+        Node instance2 = new Node('c', 2);
+        Node instance = new Node(instance2, instance3);
+        Node expResult = new Node('c', 2);
+        instance.setVasen(expResult);
+        assertTrue(instance.getVasen() == expResult);
     }
 
     /**
@@ -118,13 +114,13 @@ public class NodeTest {
      */
     @Test
     public void testGetOikea() {
-        //System.out.println("getOikea");
-        Node instance = null;
-        Node expResult = null;
+        //System.out.println("getVasen");
+        Node instance3 = new Node('d', 3);
+        Node instance2 = new Node('c', 2);
+        Node instance = new Node(instance2, instance3);
+        Node expResult = new Node('d', 3);
         Node result = instance.getOikea();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertTrue(result.getMerkki() == expResult.getMerkki());
     }
 
     /**
@@ -132,12 +128,13 @@ public class NodeTest {
      */
     @Test
     public void testSetOikea() {
-        //System.out.println("setOikea");
-        Node oikea = null;
-        Node instance = null;
-        instance.setOikea(oikea);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+         //System.out.println("getVasen");
+        Node instance3 = new Node('d', 3);
+        Node instance2 = new Node('c', 2);
+        Node instance = new Node(instance2, instance3);
+        Node expResult = new Node('c', 2);
+        instance.setOikea(expResult);
+        assertTrue(instance.getOikea() == expResult);
     }
 
     /**
@@ -146,12 +143,10 @@ public class NodeTest {
     @Test
     public void testIsLehti() {
         //System.out.println("isLehti");
-        Node instance = null;
-        boolean expResult = false;
+        Node instance = new Node('d', 3);
+        boolean expResult = true;
         boolean result = instance.isLehti();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+       assertTrue(instance.isLehti());;
     }
 
     /**
@@ -160,11 +155,10 @@ public class NodeTest {
     @Test
     public void testSetBits() {
         //System.out.println("setBits");
-        String merkki = "";
-        Node instance = null;
+        String merkki = "1";
+        Node instance = new Node('a',1);
         instance.setBits(merkki);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertTrue(instance.getBits().equals(merkki));
     }
 
     /**
@@ -172,12 +166,10 @@ public class NodeTest {
      */
     @Test
     public void testGetBits() {
-        //System.out.println("getBits");
-        Node instance = null;
-        String expResult = "";
-        String result = instance.getBits();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        //System.out.println("setBits");
+        String merkki = "1";
+        Node instance = new Node('a',1);
+        instance.setBits(merkki);
+        assertTrue(instance.getBits().equals(merkki));
     }
 }

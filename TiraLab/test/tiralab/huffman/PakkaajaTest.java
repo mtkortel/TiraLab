@@ -4,6 +4,7 @@
  */
 package tiralab.huffman;
 
+import java.util.BitSet;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -11,9 +12,9 @@ import static org.junit.Assert.*;
  *
  * @author mkortelainen
  */
-public class NodeComparatorTest {
+public class PakkaajaTest {
     
-    public NodeComparatorTest() {
+    public PakkaajaTest() {
     }
 
     @BeforeClass
@@ -33,16 +34,17 @@ public class NodeComparatorTest {
     }
 
     /**
-     * Test of compare method, of class NodeComparator.
+     * Test of toByteArray method, of class Pakkaaja.
      */
     @Test
-    public void testCompare() {
-        System.out.println("compare");
-        Node t = new Node('a',2);
-        Node t1 = new Node('a',2);;
-        NodeComparator instance = new NodeComparator();
-        int expResult = 0;
-        int result = instance.compare(t, t1);
-        assertTrue(result == 0);
+    public void testToByteArray() {
+        System.out.println("toByteArray");
+        BitSet bits = null;
+        Pakkaaja instance = null;
+        byte[] expResult = null;
+        byte[] result = instance.toByteArray(bits);
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
     }
 }
