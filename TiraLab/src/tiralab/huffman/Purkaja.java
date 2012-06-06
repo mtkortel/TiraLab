@@ -244,7 +244,7 @@ public class Purkaja {
             }
     }
 
-   private String getBitArray(int charInt) {
+   public static String getBitArray(int charInt) {
         String bitString = Integer.toBinaryString(charInt);
         return bitString;
     }

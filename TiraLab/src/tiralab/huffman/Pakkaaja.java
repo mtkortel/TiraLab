@@ -355,6 +355,7 @@ public class Pakkaaja {
                 }
                 boolean[] he1 = new boolean[8]; 
                 int me = Huffman.bitsToByte(mbit);
+                header+=Purkaja.getBitArray(me);
                 os.write(me);
                  // Merkki
                 for(int j = 0; j < kbin1.length(); j++){
@@ -367,6 +368,7 @@ public class Pakkaaja {
                 }
                 he1 = new boolean[8]; 
                 me = Huffman.bitsToByte(kbit1);
+                header+=Purkaja.getBitArray(me);
                 os.write(me);
                  // Merkki
                 for(int j = 0; j < kbin2.length(); j++){
@@ -379,6 +381,7 @@ public class Pakkaaja {
                 }
                 he1 = new boolean[8]; 
                 me = Huffman.bitsToByte(kbit2);
+                header+=Purkaja.getBitArray(me);
                 os.write(me);
                 
                 /*
@@ -425,6 +428,7 @@ public class Pakkaaja {
             os.write(-1); // Erotin 1
             os.write(-1); // Erotin 2
             os.write(-1); // Erotin 3
+            System.out.println("Header: " + header);
             String tmp="";
             for (int i=0; i < koodit.size(); i++){
                 String kbin = koodit.get(i);
@@ -442,7 +446,8 @@ public class Pakkaaja {
                         */
                 }
             }
-            System.out.println(tmp);
+            //System.out.println(tmp);
+            System.out.print("Sisältö: " );
             BitSet bs = new BitSet(8);
             int nro = 0;
             int kerrat=0;
@@ -463,6 +468,7 @@ public class Pakkaaja {
                             data += (1 << (7-i));
 		}
                 //System.out.println(tmp1 + " " + data + " " + mk + " " + tmp.length());
+                System.out.print(Purkaja.getBitArray(data));
                 os.write(data);
             }
             /*
@@ -502,8 +508,8 @@ public class Pakkaaja {
                 }
             }
             */
-            int kirjoita = Huffman.bitsToByte(bits);
-            os.write(kirjoita);
+            //int kirjoita = Huffman.bitsToByte(bits);
+            //os.write(kirjoita);
             //System.out.println(kirjoita);
             //byte[] arr = toByteArray(bs);
             //os.write(arr);
