@@ -5,6 +5,7 @@
 package tiralab.huffman;
 
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -19,7 +20,13 @@ public class Pakkaaja {
     int MerkkienMäärä = 256;
     HashMap<String, Node> nodes;
     String tiedosto = "";
-    List<Byte> code;
+    
+    List<String>   merkistö;
+    List<String> koodisto;
+    List<String> koodit;
+    //List<Byte> code;
+    
+    
     String temppi="";
     
     private BitSet merkit;
@@ -27,6 +34,10 @@ public class Pakkaaja {
     public Pakkaaja(String tiedosto){
         nodes = new HashMap<String, Node>();
         merkit = new BitSet(MerkkienMäärä);
+        
+        merkistö = new ArrayList<String>();
+        koodisto = new ArrayList<String>();
+        koodit = new ArrayList<String>();
         
         this.tiedosto = tiedosto;
         pakataan(tiedosto);
@@ -113,10 +124,12 @@ public class Pakkaaja {
             Node huffman  = rakennaPuu(kerrat);
             tulostaPuu(huffman, "0");
             //System.out.println("");
-            List<Byte> koodia = new ArrayList<Byte>();
-            koodia = tulostaTiedosto(teksti, huffman, koodia);
+            //List<Byte> koodia = new ArrayList<Byte>();
+            //koodia = tulostaTiedosto(teksti, huffman, koodia);
+            tulostaTiedosto(teksti, huffman);
             //System.out.println("Header osio");
-            code = new ArrayList<Byte>();
+            //code = new ArrayList<Byte>();
+            
             tulostaPuu2(huffman, "0");
             /*
             System.out.println("Tällainen merkit ja koodit");
@@ -124,8 +137,8 @@ public class Pakkaaja {
                 System.out.print(b);
             }
             */
-            code.add(Byte.MAX_VALUE);
-            code.add(Byte.MAX_VALUE);
+            //code.add(Byte.MAX_VALUE);
+            //code.add(Byte.MAX_VALUE);
             /*
             System.out.println();
             System.out.println("Tällainen välimerkki");
@@ -134,7 +147,7 @@ public class Pakkaaja {
             }
             * 
             */
-            code.addAll(koodia);
+            //code.addAll(koodia);
             //System.out.println();
             //System.out.println("Tällainen lopullinen");
             //for(Byte b: code){
@@ -168,12 +181,13 @@ public class Pakkaaja {
      * @param alkuperäinen
      * @param huffmanTree 
      */
-    private List<Byte> tulostaTiedosto(String alkuperäinen, Node huffman, List<Byte> text){
-        String jono="";
+    private void tulostaTiedosto(String alkuperäinen, Node huffman){
+        //String jono="";
         for (char c: alkuperäinen.toCharArray()){
             Node n = nodes.get(String.valueOf(c));
-            jono += n.getBits() + " ";
-            text.add((byte) Integer.parseInt(n.getBits(), 2));
+            //jono += n.getBits() + " ";
+            koodit.add(n.getBits());
+            //text.add((byte) Integer.parseInt(n.getBits(), 2));
         }
         /*
         System.out.println("Alkuperäinen teksti");
@@ -186,9 +200,9 @@ public class Pakkaaja {
         //System.out.println("Koko: " + jono.length());
         
         
-        temppi = jono.replaceAll("" , "");
+        //temppi = jono.replaceAll("" , "");
         //kirjoitaPuu(huffman);
-        return text;
+        //return text;
     }
     
     /*
@@ -228,12 +242,18 @@ public class Pakkaaja {
     
     private void tulostaPuu2(Node huffman, String merkki) {
         if (huffman.isLehti()){
-            byte merkki_byte = (byte) (int)huffman.getMerkki();
-            byte koodi_byte  = (byte) Integer.parseInt(merkki, 2); //so mode 2
+            // Ensin lisätään merkki (esim. a)
+            //byte merkki_byte = (byte) (int)huffman.getMerkki();
+            // Sitten lisätään huffman puun polku (00001)
+            //byte koodi_byte  = (byte) Integer.parseInt(merkki, 2); // 010101
+            //BitSet bs_merkki = new BitSet(8);
+            //BitSet bs_koodi = new BitSet(8);
             //System.out.print(merkki_byte );
             //System.out.print(" " + koodi_byte + " " );
-            code.add(merkki_byte);
-            code.add(koodi_byte);
+            merkistö.add(String.valueOf(huffman.getMerkki()));
+            koodisto.add(merkki);
+            //code.add(merkki_byte);
+            //code.add(koodi_byte);
             return;
         } else {
             //setti.set(0, true);
@@ -261,6 +281,13 @@ public class Pakkaaja {
     /**
      * Tulostaa pakatun tiedoston ja näyttää ko'ot
      * 
+     * Käydään läpi koko lista josta löytyy kaikki tarvittava tieto
+     * Ensin on header osio, jossa ensin on merkki (char) ja sen jälkeen
+     * sitä vastaava huffman koodi. header ja content osiot on eroteltu
+     * kahdella Byte.MAX_VALUE 11111111 kentällä.
+     * Merkki on kolme bittiä ja koodi on 16 bittiä, joiden pitäisi riittää
+     * headerin osuuteen.
+     * 
      * @param tiedosto 
      */
     private void kirjoita(String tiedosto) {
@@ -274,30 +301,254 @@ public class Pakkaaja {
             File file = new File(utied);
             FileOutputStream fs = new FileOutputStream(utied);
             ObjectOutputStream os = new ObjectOutputStream(fs);
-            int j=0;
-            BitSet bitit = new BitSet(8);
+            Object buffer = null;
+            //byte[] merkki = new byte[3];
+            //byte[] koodi = new byte[16];
+            /*
+             * Käydään läpi koko lista josta löytyy kaikki tarvittava tieto
+             * Ensin on header osio, jossa ensin on merkki (char) ja sen jälkeen
+             * sitä vastaava huffman koodi. header ja content osiot on eroteltu
+             * kahdella Byte.MAX_VALUE 11111111 kentällä.
+             * Merkki on kolme bittiä ja koodi on 16 bittiä, joiden pitäisi riittää
+             * headerin osuuteen.
+             */
+            //boolean isHeader = true; // header vai content
+            //boolean isMerkki = true; // merkki vai koodi
+            //int max_value_count = 0;
+            //System.out.println("Code pituus: " + code.size());
+            //int num = 0;
+            //System.out.println("Merkistö koko: " + merkistö.size());
+            //System.out.println("Koodisto koko: " + koodisto.size());
+            //System.out.println("Koodit   koko: " + koodit.size());
+            String header="";
+            for (int i=0; i < merkistö.size(); i++){
+                String mbin = Integer.toBinaryString(merkistö.get(i).toString().toCharArray()[0]);
+                String kbin = koodisto.get(i);
+                
+                String kbin1="";
+                String kbin2="";
+                
+                boolean[] mbit = new boolean[8];
+                boolean[] kbit1 = new boolean[8];
+                boolean[] kbit2 = new boolean[8];
+                
+                while (mbin.length() < 8){
+                    mbin = "0" + mbin;
+                }
+                while (kbin.length() < 16){
+                    kbin = "0" + kbin;
+                }
+                kbin1 = kbin.substring(0, 8);
+                kbin2 = kbin.substring(8);
+                
+                String tmp = mbin + kbin;
+                
+                
+                // Merkki
+                for(int j = 0; j < mbin.length(); j++){
+                    if (mbin.charAt(j) == '1'){
+                        //bs.set(j, true);
+                        mbit[j] = true;
+                    } else 
+                        //bs.set(j, false);
+                        mbit[j] = false;
+                }
+                boolean[] he1 = new boolean[8]; 
+                int me = Huffman.bitsToByte(mbit);
+                os.write(me);
+                 // Merkki
+                for(int j = 0; j < kbin1.length(); j++){
+                    if (kbin1.charAt(j) == '1'){
+                        //bs.set(j, true);
+                        kbit1[j] = true;
+                    } else 
+                        //bs.set(j, false);
+                        kbit1[j] = false;
+                }
+                he1 = new boolean[8]; 
+                me = Huffman.bitsToByte(kbit1);
+                os.write(me);
+                 // Merkki
+                for(int j = 0; j < kbin2.length(); j++){
+                    if (kbin2.charAt(j) == '1'){
+                        //bs.set(j, true);
+                        kbit2[j] = true;
+                    } else 
+                        //bs.set(j, false);
+                        kbit2[j] = false;
+                }
+                he1 = new boolean[8]; 
+                me = Huffman.bitsToByte(kbit2);
+                os.write(me);
+                
+                /*
+                for (int h = 0; h < 24; h++){
+                    if (h<8){
+                        he1[h] = mbit[h];
+                    } else if (h < 16){
+                      if (h==8){
+                          int ii = Huffman.bitsToByte(he1);
+                          os.write(ii);
+                          he1 = new boolean[8];
+                      }
+                      he1[h-8] = mbit[h];
+                    } else{
+                      if (h==16){
+                          int ii = Huffman.bitsToByte(he1);
+                          os.write(ii);
+                          he1 = new boolean[8];  
+                      }
+                      he1[h-16] = mbit[h];
+                    }
+                }
+                int ii = Huffman.bitsToByte(he1);
+                os.write(ii);
+                */
+                //byte[] arr = toByteArray(bs);
+                //System.out.println(mbin + " " + merkistö.get(i) + " " + kbin + " " + koodisto.get(i).length() + " " + arr.length);
+                //for (int l =0; l < arr.length; l++){
+                    //System.out.print(arr[l]);
+                //}
+                //System.out.println();
+                //os.write(arr);
+                //os.writeObject(bs);
+            }
+            /*
+            BitSet mm = new BitSet(24);
+            for(int i=0; i<mm.size(); i++){
+                mm.set(i, true);
+            }
+            byte[] aa = toByteArray(mm);
+            //System.out.println("Erotin koko: " + aa.length);
+            os.write(aa);
+            */
+            os.write(-1); // Erotin 1
+            os.write(-1); // Erotin 2
+            os.write(-1); // Erotin 3
+            String tmp="";
+            for (int i=0; i < koodit.size(); i++){
+                String kbin = koodit.get(i);
+                //System.out.println(kbin + " " + kbin.length());
+                //BitSet bs = new BitSet(kbin.length());
+                for(int j = 0; j < kbin.length(); j++){
+                    tmp += kbin.charAt(j);
+                    /*
+                    int mod = kbin.length() - 16;
+                    if ((mod+j) < 0){
+                        tmp += "0";
+                    } else 
+                        tmp += kbin.charAt(mod+j);
+                        * 
+                        */
+                }
+            }
+            System.out.println(tmp);
+            BitSet bs = new BitSet(8);
+            int nro = 0;
+            int kerrat=0;
+            boolean[] bits = new boolean[8];
+            int mk = 0;
+            while (mk < tmp.length() ){
+                int tmk = mk+8;
+                if (tmk > tmp.length())
+                    tmk = mk + (tmp.length()-mk);
+                String tmp1 = tmp.substring(mk, tmk);
+                while (tmp1.length() < 8){
+                    tmp1 = "0"+tmp1;
+                }
+                mk+=8;
+                int data = 0;
+		for (int i = 0; i < tmp1.length(); i++) {
+			if (tmp1.charAt(i) == '1') 
+                            data += (1 << (7-i));
+		}
+                //System.out.println(tmp1 + " " + data + " " + mk + " " + tmp.length());
+                os.write(data);
+            }
+            /*
+            for (int i=0; i < tmp.length(); i++){
+                
+                if (tmp.charAt(i) == '1'){
+                    //bs.set(i, true);
+                    bits[i-(8*kerrat)] = true;
+                } else 
+                    bits[i-(8*kerrat)] = false;
+                    //bs.set(i, false);
+                
+                nro++;
+                if (nro==8){
+                    //byte[] arr = toByteArray(bs);
+                    //os.write(arr);
+                    System.out.println(tmp.substring(i-7, i+1));
+                    for(int k=0; k < 8; k++){
+                        if (bits[k]){
+                            System.out.print("1");
+                        } else 
+                            System.out.print("0");
+                    }
+                    System.err.println(" bitit");
+                    int kirjoita = Huffman.bitsToByte(bits);
+                    os.write(kirjoita);
+                    bits = new boolean[8];
+                    kerrat++;
+                    nro=0;
+                    //System.out.println(kirjoita);
+                    
+                    //System.out.print(Integer.toBinaryString(kirjoita));
+                    //if (kerrat%2==0)
+                        //System.out.println();
+                        
+                    //bs = new BitSet(8);
+                }
+            }
+            */
+            int kirjoita = Huffman.bitsToByte(bits);
+            os.write(kirjoita);
+            //System.out.println(kirjoita);
+            //byte[] arr = toByteArray(bs);
+            //os.write(arr);
+            //os.writeObject(bs);
+            
+            //BitSet bitit = new BitSet(8);
+            /*
             boolean vielä = true;
-            String tmp1 = temppi;
+            temppi = temppi.replaceAll(" ", "");
+            String tmp1 = "1" + temppi;
             String tmp2 = "";
-            //System.out.println("Jotain");
-            while(vielä){
+            System.out.println();
+            System.out.println("Koodi");
+            System.out.println("temppi: " + temppi);
+            
+            //os.write(temppi.getBytes());
+            
+            */
+            //while(vielä){
+                /*
                 if (tmp1.length()>=8){
                     tmp2 = tmp1.substring(0, 7);
                     tmp1 = tmp1.substring(8);
                 } else {
                     tmp2 = tmp1;
                     vielä=false;
-                }
+                } 
+                
                 for(int i = 0; i < tmp2.length(); i++){
                     if (tmp2.charAt(i) == '1'){
                         bitit.set(i, true);
                     } else 
                         bitit.set(i, false);
                 }
-                byte[] arr = toByteArray(bitit);
+                */
+                //System.out.println(bitit);
+                //byte[] arr = toByteArray(bitit);
+            /*
+                for(byte b: arr){
+                    System.out.print(Integer.toBinaryString(Integer.decode(Byte.toString(b)))+ " ");
+                }
                 os.write(arr);
+                
             }
-            
+            */
             System.out.println();
             long pakattu = file.length();
             
@@ -319,7 +570,7 @@ public class Pakkaaja {
      * @param bits
      * @return 
      */
-    public byte[] toByteArray(BitSet bits) {
+    public static byte[] toByteArray(BitSet bits) {
         byte[] bytes = new byte[bits.length()/8+1];
         for (int i=0; i<bits.length(); i++) {
             if (bits.get(i)) {
@@ -328,4 +579,6 @@ public class Pakkaaja {
         }
         return bytes;
     }
+    
+    
 }
