@@ -12,6 +12,9 @@ import java.util.HashMap;
  * @author mkortelainen
  */
 public class Huffman {
+    
+    public static String pakattu = "";
+    public static String purettu = "";
     public static void main(String[] args){
         /*
         System.out.println("Testataan bittien käsittelyä");
@@ -74,6 +77,18 @@ public class Huffman {
         }
         * 
         */
+        
+        System.out.print("Tulos on ");
+        if (Huffman.pakattu.equals(Huffman.purettu)){
+            System.out.println(" sama");
+        } else
+            System.out.println(" eri");
+        
+        System.out.println("Pakkaajan koko: " + Huffman.pakattu.length());
+        System.out.println("Purkajan koko : " + Huffman.purettu.length());
+        
+        
+        
     }
     
     /**

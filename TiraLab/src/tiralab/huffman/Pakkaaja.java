@@ -323,6 +323,7 @@ public class Pakkaaja {
             String header="";
             for (int i=0; i < merkistö.size(); i++){
                 String mbin = Integer.toBinaryString(merkistö.get(i).toString().toCharArray()[0]);
+                //int mint = Integer.parseInt(merkistö.get(i));
                 String kbin = koodisto.get(i);
                 
                 String kbin1="";
@@ -357,6 +358,9 @@ public class Pakkaaja {
                 int me = Huffman.bitsToByte(mbit);
                 header+=Purkaja.getBitArray(me);
                 os.write(me);
+                //System.out.print(me + " ");
+                Huffman.pakattu += me + " ";
+
                  // Merkki
                 for(int j = 0; j < kbin1.length(); j++){
                     if (kbin1.charAt(j) == '1'){
@@ -370,6 +374,8 @@ public class Pakkaaja {
                 me = Huffman.bitsToByte(kbit1);
                 header+=Purkaja.getBitArray(me);
                 os.write(me);
+                //System.out.print(me + " ");
+                Huffman.pakattu += me + " ";
                  // Merkki
                 for(int j = 0; j < kbin2.length(); j++){
                     if (kbin2.charAt(j) == '1'){
@@ -382,6 +388,9 @@ public class Pakkaaja {
                 he1 = new boolean[8]; 
                 me = Huffman.bitsToByte(kbit2);
                 header+=Purkaja.getBitArray(me);
+                //System.out.print(me + " ");
+                Huffman.pakattu += me + " ";
+
                 os.write(me);
                 
                 /*
@@ -428,7 +437,11 @@ public class Pakkaaja {
             os.write(-1); // Erotin 1
             os.write(-1); // Erotin 2
             os.write(-1); // Erotin 3
-            System.out.println("Header: " + header);
+            Huffman.pakattu += 255 + " ";
+            Huffman.pakattu += 255 + " ";
+            Huffman.pakattu += 255 + " ";
+            //System.out.println("Header: " + header);
+            //Huffman.pakattu = header;
             String tmp="";
             for (int i=0; i < koodit.size(); i++){
                 String kbin = koodit.get(i);
@@ -447,7 +460,7 @@ public class Pakkaaja {
                 }
             }
             //System.out.println(tmp);
-            System.out.print("Sisältö: " );
+            //System.out.print("Sisältö: " );
             BitSet bs = new BitSet(8);
             int nro = 0;
             int kerrat=0;
@@ -468,7 +481,9 @@ public class Pakkaaja {
                             data += (1 << (7-i));
 		}
                 //System.out.println(tmp1 + " " + data + " " + mk + " " + tmp.length());
-                System.out.print(Purkaja.getBitArray(data));
+                //System.out.print(Purkaja.getBitArray(data));
+                //Huffman.pakattu += Purkaja.getBitArray(data);
+                Huffman.pakattu += data + " ";
                 os.write(data);
             }
             /*

@@ -15,8 +15,10 @@ import java.util.*;
  */
 public class Purkaja {
     private String tiedosto="";
+    private List<Node2> nodes;
 
     public Purkaja(String tiedosto){
+        nodes = new ArrayList<Node2>();
         this.tiedosto = tiedosto;
         puretaan(tiedosto);
     }
@@ -55,12 +57,17 @@ public class Purkaja {
             String boolString="";
             
             try{
+                int laskuri = 0;
                 while((c = os.read()) != -1){
                     intList.add(c);
                     chr = (char)c;
                     boolString = getBitArray(c);
+                    //System.out.print(c + " ");
+                    Huffman.purettu += c + " ";
+                    laskuri++;
                 }
             } catch (Exception e){
+                System.out.println(e.getMessage());
                 os.close();
             }
             
@@ -79,6 +86,8 @@ public class Purkaja {
         try{    
             List<Integer> lista = luePurettavaTiedosto(tiedosto);
             Map<String, String> kartta = new HashMap<String, String>();
+            Map<Integer, String> kartta2 = new HashMap<Integer, String>();
+            List<Integer> koodit = new ArrayList<Integer>();
             int codeStart = 0;
             // Etsitään ensin header osion tiedot.
             // Tiedetään että header ko'ostuu 24 bitistä
@@ -96,7 +105,14 @@ public class Purkaja {
                     //System.out.print(i/3+1 + " Merkki: " + (char)i1 + " " );
                     //System.out.println("Koodi : " + getBitArray(i2) + getBitArray(i3));
                     kartta.put(getBitArray(i2) + getBitArray(i3), String.valueOf((char)i1));
+                    kartta2.put(i2+i3, String.valueOf((char)i1));
                     header += getBitArray(i2) + getBitArray(i3);
+                    Node2 node = new Node2();
+                    node.setMerkki((char)i1);
+                    node.setCode1(i2);
+                    node.setCode2(i3);
+                    nodes.add(node);
+                    
                 }
                 //System.out.println(i1 + " " + i2 + " " + i3);
                 
@@ -107,6 +123,9 @@ public class Purkaja {
             String tmp = "";
             for (int i=codeStart; i<lista.size(); i=i+2){
                 int i1 = lista.get(i);
+                int ii1 = lista.get(i);
+                int ii2 = lista.get(i+1);
+                koodit.add(ii1+ii2);
                 //tmp += Integer.toBinaryString(i1);
                 boolean[] bitit = Huffman.byteToBits(i1);
                 for(int m=0; m<bitit.length; m++){
@@ -115,6 +134,14 @@ public class Purkaja {
                     } else 
                         tmp += "0";
                 }
+                
+                for (Node2 node: nodes){
+                    int i5 = node.getCode1();
+                    int j5 = node.getCode2();
+                    if (node.getCode1()==ii1 && node.getCode2()==ii2){
+                        System.out.print(node.getMerkki());
+                    }
+                }
                 //int i2 = lista.get(i+1);
                 
                 //String tmp = getBitArray(i1) + getBitArray(i2);
@@ -122,18 +149,26 @@ public class Purkaja {
                 //System.out.print(kartta.get(getBitArray(i1) + getBitArray(i2)));
                 //teksti+=kartta.get(getBitArray(i1) + getBitArray(i2));
             }
-            System.out.println(header);
-            System.out.println(tmp);
-            System.out.println("Kirjoitetaan");
+            //System.out.println(header);
+            //System.out.println(tmp);
+            
+            //Huffman.purettu = header + tmp;
+            
             String etsijä = "";
+            //System.out.println(tmp);
             for (int i=0; i < tmp.length(); i++){
-                etsijä = String.valueOf(tmp.charAt(i));
+                etsijä += String.valueOf(tmp.charAt(i));
                 if (kartta.containsKey(etsijä)){
-                    System.out.print(etsijä);
+                    //System.out.print(etsijä);
+                    //System.out.print(kartta.get(etsijä));
                     teksti += etsijä;
                     etsijä="";
                 }
             }
+            
+            
+            
+                
         } catch(Exception e){
             System.out.println(e.getMessage());
         }
