@@ -6,6 +6,7 @@ package tiralab.huffman;
 
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.Scanner;
 
 /**
  *
@@ -77,15 +78,35 @@ public class Huffman {
         }
         * 
         */
-        
+        System.out.println(pakattu);
+        System.out.println(purettu);
+        /*
+        Scanner lukija = new Scanner(pakattu);
+        Scanner lukija2 = new Scanner(purettu);
         System.out.print("Tulos on ");
-        if (Huffman.pakattu.equals(Huffman.purettu)){
+        int laskuri = 0;
+        while(lukija.hasNext()) {
+            String sana1 = lukija.next();
+            String sana2 = "tyhjä";
+            if(lukija2.hasNext()) {
+                sana2 = lukija2.next();
+            }
+            if (!sana1.equals(sana2)) {
+                System.out.println(laskuri);
+                System.out.println("sanat erosivat " + sana1 + " " + sana2);
+ 
+            } 
+            laskuri++;
+        }
+        * 
+        */
+        if (pakattu.equals(purettu)){
             System.out.println(" sama");
         } else
             System.out.println(" eri");
         
-        System.out.println("Pakkaajan koko: " + Huffman.pakattu.length());
-        System.out.println("Purkajan koko : " + Huffman.purettu.length());
+        System.out.println("Pakkaajan koko: " + pakattu.length());
+        System.out.println("Purkajan koko : " + purettu.length());
         
         
         

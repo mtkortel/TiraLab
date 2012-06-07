@@ -40,7 +40,8 @@ public class Purkaja {
         try{
             //File file = new File(tiedosto);
             FileInputStream fs = new FileInputStream(tiedosto);
-            ObjectInputStream os = new ObjectInputStream(fs);
+            //ObjectInputStream os = new ObjectInputStream(fs);
+            
             int j=0;
             //System.out.println("Jotain");
             /*
@@ -58,17 +59,22 @@ public class Purkaja {
             
             try{
                 int laskuri = 0;
-                while((c = os.read()) != -1){
+                //while((c = os.read()) != -1){
+                while((c = fs.read()) != -1){
+                    //if (laskuri >= 2047) {
+                          //System.out.println("jotain");
+                    //}
                     intList.add(c);
                     chr = (char)c;
                     boolString = getBitArray(c);
-                    //System.out.print(c + " ");
+                    System.out.print(c + " ");
                     Huffman.purettu += c + " ";
                     laskuri++;
                 }
+                
             } catch (Exception e){
                 System.out.println(e.getMessage());
-                os.close();
+                fs.close();
             }
             
             //System.out.println("Koko: " + lista.size());

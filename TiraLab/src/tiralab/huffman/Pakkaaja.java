@@ -122,15 +122,15 @@ public class Pakkaaja {
             int[] kerrat  = teeKertaTaulukko(teksti);
             // Tiedosto luettu loppuun rakennetaan puu
             Node huffman  = rakennaPuu(kerrat);
-            tulostaPuu(huffman, "0");
+            päivitäHuffmanPuu(huffman, "0");
             //System.out.println("");
             //List<Byte> koodia = new ArrayList<Byte>();
             //koodia = tulostaTiedosto(teksti, huffman, koodia);
-            tulostaTiedosto(teksti, huffman);
+            rakennaContent(teksti, huffman);
             //System.out.println("Header osio");
             //code = new ArrayList<Byte>();
             
-            tulostaPuu2(huffman, "0");
+            rakennaHeader(huffman, "0");
             /*
             System.out.println("Tällainen merkit ja koodit");
             for(Byte b: code){
@@ -162,18 +162,19 @@ public class Pakkaaja {
   
     
     /**
-     * Tulostaa puun ---- TESTIVERSIO
+     * Päivitää Huffmanpuun bittiesityksen ja talleettaa sen nodeen.
      * @param huffman 
+     * @param merkki
      */
-    private void tulostaPuu(Node huffman, String merkki) {
+    private void päivitäHuffmanPuu(Node huffman, String merkki) {
         if (huffman.isLehti()){
             //System.out.println(huffman.getMerkki()+ " - " + merkki + " - " + huffman.getMäärä());
             huffman.setBits(merkki);
             nodes.put(String.valueOf(huffman.getMerkki()), huffman);
             return;
         } 
-        tulostaPuu(huffman.getVasen(), merkki + "0");
-        tulostaPuu(huffman.getOikea(), merkki + "1");
+        päivitäHuffmanPuu(huffman.getVasen(), merkki + "0");
+        päivitäHuffmanPuu(huffman.getOikea(), merkki + "1");
     }
     /**
      * Käydään alkuperäinen teksti merkki merkiltä läpi ja muutetaan kirjain huffman koodiksi
@@ -181,7 +182,7 @@ public class Pakkaaja {
      * @param alkuperäinen
      * @param huffmanTree 
      */
-    private void tulostaTiedosto(String alkuperäinen, Node huffman){
+    private void rakennaContent(String alkuperäinen, Node huffman){
         //String jono="";
         for (char c: alkuperäinen.toCharArray()){
             Node n = nodes.get(String.valueOf(c));
@@ -236,11 +237,13 @@ public class Pakkaaja {
     }
 */
     /**
-     * Tulostaa puun ---- TESTIVERSIO
+     * Rakentaa pakatun tiedoston header osion
+     * Ensimmäinen tavu on merkki ja kaksi seuraavaa tavua on huffman-koodattu esitys
      * @param huffman 
+     * @param merkki
      */
     
-    private void tulostaPuu2(Node huffman, String merkki) {
+    private void rakennaHeader(Node huffman, String merkki) {
         if (huffman.isLehti()){
             // Ensin lisätään merkki (esim. a)
             //byte merkki_byte = (byte) (int)huffman.getMerkki();
@@ -259,8 +262,8 @@ public class Pakkaaja {
             //setti.set(0, true);
             //System.out.print(setti);
         }
-        tulostaPuu2(huffman.getVasen(), merkki + "0");
-        tulostaPuu2(huffman.getOikea(), merkki + "1");
+        rakennaHeader(huffman.getVasen(), merkki + "0");
+        rakennaHeader(huffman.getOikea(), merkki + "1");
     }
     /*
     private void kirjoitaPuu(Node puu){
@@ -284,9 +287,10 @@ public class Pakkaaja {
      * Käydään läpi koko lista josta löytyy kaikki tarvittava tieto
      * Ensin on header osio, jossa ensin on merkki (char) ja sen jälkeen
      * sitä vastaava huffman koodi. header ja content osiot on eroteltu
-     * kahdella Byte.MAX_VALUE 11111111 kentällä.
-     * Merkki on kolme bittiä ja koodi on 16 bittiä, joiden pitäisi riittää
+     * kolmella Byte.MAX_VALUE 11111111 (int 255) kentällä.
+     * Merkki on yhden tavun ja koodi on 2 tavua, joiden pitäisi riittää
      * headerin osuuteen.
+     * Pakattu teksti on tallennettu 2 tavun paloissa huffman koodattuna.
      * 
      * @param tiedosto 
      */
@@ -300,7 +304,7 @@ public class Pakkaaja {
         try{
             File file = new File(utied);
             FileOutputStream fs = new FileOutputStream(utied);
-            ObjectOutputStream os = new ObjectOutputStream(fs);
+            //ObjectOutputStream os = new ObjectOutputStream(fs);
             Object buffer = null;
             //byte[] merkki = new byte[3];
             //byte[] koodi = new byte[16];
@@ -357,7 +361,8 @@ public class Pakkaaja {
                 boolean[] he1 = new boolean[8]; 
                 int me = Huffman.bitsToByte(mbit);
                 header+=Purkaja.getBitArray(me);
-                os.write(me);
+                //os.write(me);
+                fs.write(me);
                 //System.out.print(me + " ");
                 Huffman.pakattu += me + " ";
 
@@ -373,7 +378,8 @@ public class Pakkaaja {
                 he1 = new boolean[8]; 
                 me = Huffman.bitsToByte(kbit1);
                 header+=Purkaja.getBitArray(me);
-                os.write(me);
+                //os.write(me);
+                fs.write(me);
                 //System.out.print(me + " ");
                 Huffman.pakattu += me + " ";
                  // Merkki
@@ -391,7 +397,8 @@ public class Pakkaaja {
                 //System.out.print(me + " ");
                 Huffman.pakattu += me + " ";
 
-                os.write(me);
+                //os.write(me);
+                fs.write(me);
                 
                 /*
                 for (int h = 0; h < 24; h++){
@@ -434,9 +441,13 @@ public class Pakkaaja {
             //System.out.println("Erotin koko: " + aa.length);
             os.write(aa);
             */
-            os.write(-1); // Erotin 1
-            os.write(-1); // Erotin 2
-            os.write(-1); // Erotin 3
+            //os.write(me);
+            fs.write(-1);
+            fs.write(-1);
+            fs.write(-1);
+            //os.write(-1); // Erotin 1
+            //os.write(-1); // Erotin 2
+            //os.write(-1); // Erotin 3
             Huffman.pakattu += 255 + " ";
             Huffman.pakattu += 255 + " ";
             Huffman.pakattu += 255 + " ";
@@ -484,7 +495,8 @@ public class Pakkaaja {
                 //System.out.print(Purkaja.getBitArray(data));
                 //Huffman.pakattu += Purkaja.getBitArray(data);
                 Huffman.pakattu += data + " ";
-                os.write(data);
+                //os.write(me);
+                fs.write(data);
             }
             /*
             for (int i=0; i < tmp.length(); i++){
