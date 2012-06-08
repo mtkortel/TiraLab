@@ -178,6 +178,8 @@ public class Purkaja {
                 num++;
             }
             Arrays.sort(avaimet);
+            // Tässä pitäisi saada koodi muutettua tekstiksi.
+            // Ei toimi
             for (int i=avaimet.length-1; i>=0; i--){
                 tmp.replaceAll(avaimet[i], kartta.get(avaimet[i]));
             }
