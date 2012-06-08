@@ -78,8 +78,8 @@ public class Huffman {
         }
         * 
         */
-        System.out.println(pakattu);
-        System.out.println(purettu);
+        //System.out.println(pakattu);
+        //System.out.println(purettu);
         /*
         Scanner lukija = new Scanner(pakattu);
         Scanner lukija2 = new Scanner(purettu);

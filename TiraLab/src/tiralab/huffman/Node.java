@@ -23,6 +23,9 @@ public class Node {
     private Node oikea;
     private boolean lehti;
     private String bits;
+    public Node(){
+        
+    }
     /**
      * Konstruktori binääräpuun lehdelle
      */

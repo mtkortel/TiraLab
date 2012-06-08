@@ -15,10 +15,10 @@ import java.util.*;
  */
 public class Purkaja {
     private String tiedosto="";
-    private List<Node2> nodes;
+    private List<Node> nodes;
 
     public Purkaja(String tiedosto){
-        nodes = new ArrayList<Node2>();
+        nodes = new ArrayList<Node>();
         this.tiedosto = tiedosto;
         puretaan(tiedosto);
     }
@@ -56,7 +56,7 @@ public class Purkaja {
             char chr = 0;
             int c = -1;
             String boolString="";
-            
+
             try{
                 int laskuri = 0;
                 //while((c = os.read()) != -1){
@@ -67,7 +67,7 @@ public class Purkaja {
                     intList.add(c);
                     chr = (char)c;
                     boolString = getBitArray(c);
-                    System.out.print(c + " ");
+                    //System.out.print(c + " ");
                     Huffman.purettu += c + " ";
                     laskuri++;
                 }
@@ -112,14 +112,18 @@ public class Purkaja {
                     //System.out.println("Koodi : " + getBitArray(i2) + getBitArray(i3));
                     kartta.put(getBitArray(i2) + getBitArray(i3), String.valueOf((char)i1));
                     kartta2.put(i2+i3, String.valueOf((char)i1));
-                    header += getBitArray(i2) + getBitArray(i3);
-                    Node2 node = new Node2();
+                    String st = getBitArray(i2) + getBitArray(i3);
+                    header += (char)i1 + " " + st + " ";
+                    //Node2 node = new Node2();
+                    //node.setMerkki((char)i1);
+                    //node.setCode1(i2);
+                    //node.setCode2(i3);
+                    Node node = new Node();
                     node.setMerkki((char)i1);
-                    node.setCode1(i2);
-                    node.setCode2(i3);
-                    nodes.add(node);
+                    node.setBits(st);
                     
                 }
+                
                 //System.out.println(i1 + " " + i2 + " " + i3);
                 
             }
@@ -141,6 +145,7 @@ public class Purkaja {
                         tmp += "0";
                 }
                 
+                /*
                 for (Node2 node: nodes){
                     int i5 = node.getCode1();
                     int j5 = node.getCode2();
@@ -148,6 +153,7 @@ public class Purkaja {
                         System.out.print(node.getMerkki());
                     }
                 }
+                */
                 //int i2 = lista.get(i+1);
                 
                 //String tmp = getBitArray(i1) + getBitArray(i2);
@@ -162,16 +168,20 @@ public class Purkaja {
             
             String etsijä = "";
             //System.out.println(tmp);
-            for (int i=0; i < tmp.length(); i++){
-                etsijä += String.valueOf(tmp.charAt(i));
-                if (kartta.containsKey(etsijä)){
-                    //System.out.print(etsijä);
-                    //System.out.print(kartta.get(etsijä));
-                    teksti += etsijä;
-                    etsijä="";
-                }
+            String[] avaimet = new String[kartta.size()];
+            Set<String> av = kartta.keySet();
+            Iterator iter = av.iterator();
+            int num=0;
+            boolean on = true;
+            while (iter.hasNext()){
+                avaimet[num] = (String)iter.next();
+                num++;
             }
-            
+            Arrays.sort(avaimet);
+            for (int i=avaimet.length-1; i>=0; i--){
+                tmp.replaceAll(avaimet[i], kartta.get(avaimet[i]));
+            }
+            System.out.println(tmp);
             
             
                 
