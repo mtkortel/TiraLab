@@ -14,13 +14,19 @@ import java.util.*;
  * @author mkortelainen
  */
 public class Purkaja {
+    Comparator<Node> comparator = new NodeComparator();
     private String tiedosto="";
     private List<Node2> nodes;
-
+    PriorityQueue<Node> queue = new PriorityQueue<Node>(1, comparator); 
+    String koodattuTeksti="";
+    
+    Node huffmanTree = null;
+    
+    
     public Purkaja(String tiedosto){
         nodes = new ArrayList<Node2>();
         this.tiedosto = tiedosto;
-        puretaan(tiedosto);
+        String str = puretaan(tiedosto);
     }
 
     /**
@@ -67,7 +73,7 @@ public class Purkaja {
                     intList.add(c);
                     chr = (char)c;
                     boolString = getBitArray(c);
-                    System.out.print(c + " ");
+                    //System.out.print(c);
                     Huffman.purettu += c + " ";
                     laskuri++;
                 }
@@ -89,11 +95,14 @@ public class Purkaja {
      */
     private String puretaan(String tiedosto) {
         String teksti="";
+        Map<Integer, Integer> kerrat = new TreeMap<Integer, Integer>();
+        Node puu=null;
         try{    
             List<Integer> lista = luePurettavaTiedosto(tiedosto);
             Map<String, String> kartta = new HashMap<String, String>();
             Map<Integer, String> kartta2 = new HashMap<Integer, String>();
-            List<Integer> koodit = new ArrayList<Integer>();
+            String koodi = "";
+            List<Integer> intKoodit = new ArrayList<Integer>();
             int codeStart = 0;
             // Etsitään ensin header osion tiedot.
             // Tiedetään että header ko'ostuu 24 bitistä
@@ -103,36 +112,87 @@ public class Purkaja {
                 int i2 = lista.get(i+1);
                 int i3 = lista.get(i+2);
                 
-                if (i1 == 255 && i2 == 255 && i3 == 255){
-                    codeStart = i+3;
+                if (i1 == 255 && i2 == 255 ){//&& i3 == 255){
+                    codeStart = i+2;
                     i = lista.size();
                     
                 } else {
+                    //System.out.println(i1 + " " + i2);
                     //System.out.print(i/3+1 + " Merkki: " + (char)i1 + " " );
-                    //System.out.println("Koodi : " + getBitArray(i2) + getBitArray(i3));
-                    kartta.put(getBitArray(i2) + getBitArray(i3), String.valueOf((char)i1));
+                    String kode1 = getBitArray(i2);
+                    String kode2 = getBitArray(i3);
+                    String code = "";
+                    if (kode1.equals("0")){
+                        code = getBitArray(i3);
+                    } else {
+                        code = getBitArray(i2);
+                        for (int mi = kode2.length(); mi <8; mi++){
+                            code += "0";
+                        }
+                        code += getBitArray(i3);
+                    }
+                    int te = Integer.parseInt(code, 2);
+                    //System.out.println((char)i1 + " " + Integer.toBinaryString(te) + " " + code);
+                    //kartta.put(code, String.valueOf((char)i1));
+                    /*
+                     * Etsitään erotinmerkki
+                     */
+                    String kode="";
+                    boolean tosi=true;
+                    for(int ci=0; ci < code.length(); ci++){
+                        if (code.charAt(ci) == '0'){
+                            
+                            kode = code.substring(ci+1);
+                                    
+                            ci = code.length();
+                        }
+                    }
+                    System.out.println((char)i1 + " Code: " + code + " kode " + kode+ " " + Integer.toBinaryString(Integer.parseInt(kode, 2)));
+                    kartta.put(kode, String.valueOf((char)i1));
+                    
+                    
+                    //kartta.put(getBitArray(i2) + getBitArray(i3), String.valueOf((char)i1));
+                    //System.out.println((char)i1 + " " + i2);
+                    /*
+                    boolean[] b1 = Huffman.byteToBits(i2);
+                    boolean[] b2 = Huffman.byteToBits(i3);
+                    String kk = Huffman.byteArrayToString(b1)+Huffman.byteArrayToString(b2);
+                    kartta.put(kk, String.valueOf((char)i1));
+                    
                     kartta2.put(i2+i3, String.valueOf((char)i1));
-                    header += getBitArray(i2) + getBitArray(i3);
-                    Node2 node = new Node2();
-                    node.setMerkki((char)i1);
-                    node.setCode1(i2);
-                    node.setCode2(i3);
-                    nodes.add(node);
+                    System.out.print((char)i1 + " " + i2 + " " + i3 + " " + kk + " ");
+                    System.out.println(Integer.parseInt(kk, 2));
+                    kerrat.put(i1, Integer.parseInt(kk, 2));
+                    */
                     
                 }
                 //System.out.println(i1 + " " + i2 + " " + i3);
                 
             }
-
+            huffmanTree = teePuu(kartta);
             // Koodattu teksti
             // Tiedetään että jokainen merkki on koodattu 16 bitillä
             String tmp = "";
-            for (int i=codeStart; i<lista.size(); i=i+2){
+            for (int i=codeStart; i<lista.size(); i++){
                 int i1 = lista.get(i);
-                int ii1 = lista.get(i);
-                int ii2 = lista.get(i+1);
-                koodit.add(ii1+ii2);
+                //int ii1 = lista.get(i);
+                //int ii2 = lista.get(i+1);
+                //koodit.add(String.valueOf(ii1) + " " + String.valueOf(ii2));
+                //System.out.println(String.valueOf(ii1) + " " + String.valueOf(ii2));
+                boolean[] bt = Huffman.byteToBits(i1);
+                intKoodit.add(i1);
+                //String koodia = Huffman.byteArrayToString(bt);
+                
+                //int i2 = intKoodit.get(i+1);
+                
+                
+                koodattuTeksti += getBitArray(i1);
+                
+                //String merkki = etsiKoodi(koodia, puu);
+                //System.out.print(merkki);
+                
                 //tmp += Integer.toBinaryString(i1);
+                /*
                 boolean[] bitit = Huffman.byteToBits(i1);
                 for(int m=0; m<bitit.length; m++){
                     if (bitit[m]){
@@ -140,14 +200,16 @@ public class Purkaja {
                     } else 
                         tmp += "0";
                 }
-                
+                * 
+                */
+                /*
                 for (Node2 node: nodes){
                     int i5 = node.getCode1();
                     int j5 = node.getCode2();
                     if (node.getCode1()==ii1 && node.getCode2()==ii2){
                         System.out.print(node.getMerkki());
                     }
-                }
+                }*/
                 //int i2 = lista.get(i+1);
                 
                 //String tmp = getBitArray(i1) + getBitArray(i2);
@@ -157,27 +219,44 @@ public class Purkaja {
             }
             //System.out.println(header);
             //System.out.println(tmp);
-            
+            //System.out.println(koodattuTeksti);
             //Huffman.purettu = header + tmp;
             
-            String etsijä = "";
+            String etsijä = "0";
             //System.out.println(tmp);
-            for (int i=0; i < tmp.length(); i++){
-                etsijä += String.valueOf(tmp.charAt(i));
+            
+            for (int i=0; i < koodattuTeksti.length(); i++){
+                etsijä += String.valueOf(koodattuTeksti.charAt(i));
+                
                 if (kartta.containsKey(etsijä)){
                     //System.out.print(etsijä);
                     //System.out.print(kartta.get(etsijä));
-                    teksti += etsijä;
-                    etsijä="";
+                    teksti += kartta.get(etsijä);
+                    etsijä="0";
                 }
             }
+            System.out.println();
+            System.out.println(teksti);
+            /*
+            for(String tstr: koodit){
+                String[] t2 = tstr.split(" ");
+                int i1 = Integer.parseInt(t2[0]);
+                int i2 = Integer.parseInt(t2[1]);
+                for(Node2 node: nodes){
+                    int n1 = node.getCode1();
+                    int n2 = node.getCode2();
+                    if (i1 == node.getCode1() && i2 == node.getCode2())
+                        System.out.print(node.getMerkki());
+                }
+            }
+            */
+           
             
-            
-            
-                
+            //System.out.println(header);
         } catch(Exception e){
             System.out.println(e.getMessage());
         }
+        
         return teksti;
     }
 
@@ -239,9 +318,9 @@ public class Purkaja {
             * 
             */
         }
-        System.out.println();
-        System.out.println(s);
-        System.out.println(bt);
+        //System.out.println();
+        //System.out.println(s);
+        //System.out.println(bt);
         /*
         System.err.println("Header");
         for(String s: header)
@@ -290,5 +369,125 @@ public class Purkaja {
         return bitString;
     }
 
+    private Node teePuu(Map<String, String> kertaKartta) {
+        PriorityQueue<Node> queue = new PriorityQueue<Node>(1, comparator); 
+        int määrä=0;
+        Set<String> keys = kertaKartta.keySet();
+        Collection<String> values = kertaKartta.values();
+        Set set = kertaKartta.entrySet();
+        
+        Iterator iter = set.iterator();
+        while(iter.hasNext()){
+            Object it = iter.next();
+            String[] jono = String.valueOf(it).split("=");
+            char merkki = jono[1].charAt(0);
+            char[] jonossa = jono[0].toCharArray();
+            int numero=0;
+            for (int p=jonossa.length-1; p >= 0; p--){
+                int ii=0;
+                if(jonossa[p]=='1'){
+                    ii=1;
+                }
+                numero += ii*Math.pow(2, ((jonossa.length-1)-p));
+            }
+            
+            queue.add(new Node(merkki, numero));
+        }
+        // Tehdään niin kauan kunnes jonossa on vain yksi jäljellä eli root
+        while (queue.size() > 1){
+            Node vasen = queue.remove(); // Pienin
+            Node oikea = queue.remove(); // Pienin (ed. toiseksi pienin)
+            Node uusi = new Node(vasen, oikea);
+            queue.add(uusi); // Lisätään uusi node jonoon
+        }
+        // Palautta juuren eli ensimmäisen Noden
+        //return queue.remove();
+        return queue.poll();
+        
+    }
+
+    private void etsiPaikka(Node node, String polku){
+        String merkki="";
+        merkki = polku.substring(0, 1);
+        String loppu = "";
+        if (polku.length() > 1)
+             loppu=polku.substring(1);
+        if (merkki.equals("0")) { // Vasen
+            
+        } else { // oikea
+            
+        }
+    }
+    
+    /**
+     * Rakentaa PriorityQueue jonon koodin pituuden mukaan (Maksimijono)
+     * 
+     * @param kerrat    Taulukko merkkien siintymiskerroista
+     * @return Node     Palautaa Huffman puun
+     */
+    public Node rakennaKäänteinenPuu(int[] kerrat) {
+        PriorityQueue<Node> queue = new PriorityQueue<Node>(1, comparator); 
+        // Lisätään jonoon kaikki puun lehdet
+        for (char i = 0; i < Pakkaaja.MerkkienMäärä; i++)
+            if (kerrat[i] > 0){
+                queue.add(new Node(i, kerrat[i]));
+                //merkit.set(i);
+            }
+        
+        // Tehdään niin kauan kunnes jonossa on vain yksi jäljellä eli root
+        while (queue.size() > 1){
+            Node vasen = queue.remove(); // Pienin
+            Node oikea = queue.remove(); // Pienin (ed. toiseksi pienin)
+            Node uusi = new Node(vasen, oikea);
+            queue.add(uusi); // Lisätään uusi node jonoon
+        }
+        // Palautta juuren eli ensimmäisen Noden
+        return queue.remove();
+    }
+    
+    
+    
+    private String etsiKoodi(String koodia, Node puu) {
+        String merkki="";
+        String tmp="";
+        Node tmpNode=puu;
+        boolean vielä=true;
+        int nro=0;
+        if (tmpNode!=null){
+            while(vielä){
+                if (puu.isLehti()){
+                    merkki = String.valueOf(puu.getMerkki());
+                    vielä=false;
+                } else {
+                    tmp=koodia.substring(nro, nro+1);
+                    if(tmp.equals("0")){
+                        tmpNode = tmpNode.getVasen();
+                    } else {
+                        tmpNode = tmpNode.getOikea();
+                    }
+                    if (tmpNode!=null){
+                        vielä=true;
+                    } else 
+                        vielä=false;
+                    nro++;
+                }
+            }
+        }
+        return merkki;
+    }
+    
+    private void etsiMerkki(char c, Node huffman){
+        if (huffman != null)
+            if (huffman.isLehti()){
+                //System.out.println(huffman.getMerkki()+ " - " + merkki + " - " + huffman.getMäärä());
+                char h = huffman.getMerkki();
+                if (c == huffman.getMerkki())
+                    //löydettyMerkki=huffman.getBits();
+                return;
+                
+            } 
+            etsiMerkki(c,huffman.getVasen());
+            etsiMerkki(c,huffman.getOikea());
+    }
     
 }

@@ -78,8 +78,8 @@ public class Huffman {
         }
         * 
         */
-        System.out.println(pakattu);
-        System.out.println(purettu);
+//        System.out.println(pakattu);
+  //      System.out.println(purettu);
         /*
         Scanner lukija = new Scanner(pakattu);
         Scanner lukija2 = new Scanner(purettu);
@@ -110,6 +110,16 @@ public class Huffman {
         
         
         
+    }
+    public static String byteArrayToString(boolean[] bt){
+        String koodi="";
+        for(int m=0; m < bt.length; m++){
+            if(bt[m]){
+                koodi+="1";
+            } else 
+                koodi+="0";
+        }
+        return koodi;
     }
     
     /**
