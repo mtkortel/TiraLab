@@ -389,7 +389,7 @@ public class Pakkaaja {
                 kbin = tmpNode.getBits();
                 String kbin1="";
                 String kbin2="";
-                
+                //System.out.println(merkistö.get(i) + " " + tmpNode.getBits());
                 boolean[] mbit = new boolean[8];
                 boolean[] kbit1 = new boolean[8];
                 boolean[] kbit2 = new boolean[8];

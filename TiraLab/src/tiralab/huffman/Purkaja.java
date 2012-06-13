@@ -222,8 +222,9 @@ public class Purkaja {
             //System.out.println(koodattuTeksti);
             //Huffman.purettu = header + tmp;
             
-            String etsijä = "0";
+            String etsijä = "";
             //System.out.println(tmp);
+            System.out.println(koodattuTeksti);
             
             for (int i=0; i < koodattuTeksti.length(); i++){
                 etsijä += String.valueOf(koodattuTeksti.charAt(i));
@@ -232,7 +233,7 @@ public class Purkaja {
                     //System.out.print(etsijä);
                     //System.out.print(kartta.get(etsijä));
                     teksti += kartta.get(etsijä);
-                    etsijä="0";
+                    etsijä="";
                 }
             }
             System.out.println();
