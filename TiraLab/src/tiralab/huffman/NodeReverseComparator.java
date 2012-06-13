@@ -11,10 +11,10 @@ import java.util.Comparator;
  * 
  * @author mtkortel
  */
-public class NodeComparator implements Comparator<Node>{
+public class NodeReverseComparator implements Comparator<Node>{
 
     /**
-     * Vertaillaan esiintymiskertoja (minimijono)
+     * Vertaillaan esiintymiskertoja käänteisessä järjestyksessä (maksimijono)
      * @param t
      * @param t1
      * @return 
@@ -24,9 +24,9 @@ public class NodeComparator implements Comparator<Node>{
          // Returns a negative integer, zero, or a positive integer as this object is 
         // less than, equal to, or greater than the specified object
         if (t.getMäärä() < t1.getMäärä()){
-            return -1;
-        } else if (t.getMäärä() > t1.getMäärä()){
             return 1;
+        } else if (t.getMäärä() > t1.getMäärä()){
+            return -1;
         } 
         return 0;
     }

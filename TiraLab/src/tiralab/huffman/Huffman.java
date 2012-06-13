@@ -4,6 +4,8 @@
  */
 package tiralab.huffman;
 
+import java.io.File;
+import java.text.DecimalFormat;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -70,6 +72,28 @@ public class Huffman {
         String tiedosto = "tiedosto.huf";
         Pakkaaja pakkaaja = new Pakkaaja("tiedosto.txt");
         Purkaja purkaja = new Purkaja("tiedosto.huf");
+        try{
+            String t1 = "tiedosto.txt";
+            String t2 = "tiedosto.huf";
+            String t3 = "tiedosto.doc";
+            File file = new File(t1);
+            System.out.println();
+            long orig = file.length();
+            
+            file = new File(t2);
+            long comp = file.length();
+            file = new File(t3);
+            long tulos = file.length();
+            
+            double ero = 1.0*comp/orig*100;
+            DecimalFormat df = new DecimalFormat("##.##");
+            System.out.println("Pakkaamattoman tiedoston koko: " + orig);
+            System.out.println("Pakatun tiedoston koko       : " + comp);
+            System.out.println("Koko alkuperäisestä          : " + df.format(ero) +"%");
+            System.out.println("Puretun tiedoston koko       : " + tulos);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
         /*
         if (mode.equals("-")){
             Purkaja purkaja = new Purkaja(tiedosto);
@@ -78,8 +102,8 @@ public class Huffman {
         }
         * 
         */
-        //System.out.println(pakattu);
-        //System.out.println(purettu);
+//        System.out.println(pakattu);
+  //      System.out.println(purettu);
         /*
         Scanner lukija = new Scanner(pakattu);
         Scanner lukija2 = new Scanner(purettu);
@@ -110,6 +134,16 @@ public class Huffman {
         
         
         
+    }
+    public static String byteArrayToString(boolean[] bt){
+        String koodi="";
+        for(int m=0; m < bt.length; m++){
+            if(bt[m]){
+                koodi+="1";
+            } else 
+                koodi+="0";
+        }
+        return koodi;
     }
     
     /**

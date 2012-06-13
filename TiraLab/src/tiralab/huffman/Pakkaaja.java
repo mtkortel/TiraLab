@@ -16,8 +16,8 @@ import java.util.*;
  */
 public class Pakkaaja {
     ///TODO: Nyt tallentaa kaikki merkit omina tavuina, kun pitäisi saada bittijonoksi
-    Comparator<Node> comparator = new NodeComparator();
-    int MerkkienMäärä = 256;
+    static Comparator<Node> comparator = new NodeComparator();
+    static int MerkkienMäärä = 256;
     HashMap<String, Node> nodes;
     String tiedosto = "";
     
@@ -29,11 +29,12 @@ public class Pakkaaja {
     
     String temppi="";
     
-    private BitSet merkit;
+    //private BitSet merkit;
+    String löydettyMerkki = "";
     
     public Pakkaaja(String tiedosto){
         nodes = new HashMap<String, Node>();
-        merkit = new BitSet(MerkkienMäärä);
+        //merkit = new BitSet(MerkkienMäärä);
         
         merkistö = new ArrayList<String>();
         koodisto = new ArrayList<String>();
@@ -53,22 +54,36 @@ public class Pakkaaja {
      * @throws FileNotFoundException
      */
     private String lueTekstiTiedosto(String tiedosto) throws FileNotFoundException, IOException {
-        File file = new File(tiedosto);
+        //File file = new File(tiedosto);
+        FileInputStream fs = new FileInputStream(tiedosto);
         //System.out.println("Hakemisto: " + file.getCanonicalPath());
         
-        Scanner lukija = new Scanner(new FileInputStream(tiedosto), "UTF-8");
-        String rivi = "";
-        //String vaihto = System.getProperty("line.separator");
-
-        try {
-            while (lukija.hasNextLine()){
-                rivi += lukija.nextLine();// + vaihto;
+        char chr = 0;
+        int c = -1;
+        String boolString="";
+        
+        try{
+            int laskuri = 0;
+            //while((c = os.read()) != -1){
+            while((c = fs.read()) != -1){
+                //if (laskuri >= 2047) {
+                        //System.out.println("jotain");
+                //}
+                //intList.add(c);
+                chr = (char)c;
+                //boolString = getBitArray(c);
+                //System.out.print(c);
+                Huffman.pakattu += c + " ";
+                laskuri++;
+                boolString += String.valueOf(chr);
             }
-        } finally{
-            lukija.close();
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            fs.close();
         }
-        //System.out.println(rivi);
-        return rivi;
+        //System.out.println(boolString);
+        return boolString;
         
     }
     /**
@@ -82,6 +97,12 @@ public class Pakkaaja {
         
         for(int i = 0; i < teksti.length(); i++){
             kerrat[teksti.toCharArray()[i]]++; // lisätään esiintymiskerta merkille
+            
+        }
+        for(int i=0; i< kerrat.length; i++){
+            if (kerrat[i]>0){
+                
+            }
         }
         return kerrat;
     }
@@ -91,13 +112,13 @@ public class Pakkaaja {
      * @param kerrat    Taulukko merkkien siintymiskerroista
      * @return Node     Palautaa Huffman puun
      */
-    private Node rakennaPuu(int[] kerrat) {
+    public static Node rakennaPuu(int[] kerrat) {
         PriorityQueue<Node> queue = new PriorityQueue<Node>(1, comparator); 
         // Lisätään jonoon kaikki puun lehdet
         for (char i = 0; i < MerkkienMäärä; i++)
             if (kerrat[i] > 0){
                 queue.add(new Node(i, kerrat[i]));
-                merkit.set(i);
+                //System.out.println((char)i + " " + kerrat[i]);
             }
         
         // Tehdään niin kauan kunnes jonossa on vain yksi jäljellä eli root
@@ -108,7 +129,8 @@ public class Pakkaaja {
             queue.add(uusi); // Lisätään uusi node jonoon
         }
         // Palautta juuren eli ensimmäisen Noden
-        return queue.remove();
+        //return queue.remove();
+        return queue.poll();
     }
 
  
@@ -130,7 +152,7 @@ public class Pakkaaja {
             //System.out.println("Header osio");
             //code = new ArrayList<Byte>();
             
-            rakennaHeader(huffman, "0");
+            //rakennaHeader(huffman, "0");
             /*
             System.out.println("Tällainen merkit ja koodit");
             for(Byte b: code){
@@ -171,6 +193,10 @@ public class Pakkaaja {
             //System.out.println(huffman.getMerkki()+ " - " + merkki + " - " + huffman.getMäärä());
             huffman.setBits(merkki);
             nodes.put(String.valueOf(huffman.getMerkki()), huffman);
+            merkistö.add(String.valueOf(huffman.getMerkki()));
+            //koodisto.add(merkki);
+            koodisto.add(String.valueOf(huffman.getMäärä()));
+            //System.out.println(huffman.getMerkki() + " " + merkki);
             return;
         } 
         päivitäHuffmanPuu(huffman.getVasen(), merkki + "0");
@@ -184,10 +210,18 @@ public class Pakkaaja {
      */
     private void rakennaContent(String alkuperäinen, Node huffman){
         //String jono="";
+        
         for (char c: alkuperäinen.toCharArray()){
-            Node n = nodes.get(String.valueOf(c));
+            löydettyMerkki="";
+            etsiMerkki(c, huffman);
+            if (!löydettyMerkki.equals("")){
+                koodit.add(löydettyMerkki);
+                //System.out.println(c + " " + löydettyMerkki);
+                
+            } 
+            //Node n = nodes.get(String.valueOf(c));
             //jono += n.getBits() + " ";
-            koodit.add(n.getBits());
+            //koodit.add(n.getBits());
             //text.add((byte) Integer.parseInt(n.getBits(), 2));
         }
         /*
@@ -204,6 +238,19 @@ public class Pakkaaja {
         //temppi = jono.replaceAll("" , "");
         //kirjoitaPuu(huffman);
         //return text;
+    }
+    private void etsiMerkki(char c, Node huffman){
+        if (huffman != null)
+            if (huffman.isLehti()){
+                //System.out.println(huffman.getMerkki()+ " - " + merkki + " - " + huffman.getMäärä());
+                char h = huffman.getMerkki();
+                if (c == huffman.getMerkki())
+                    löydettyMerkki=huffman.getBits();
+                return;
+                
+            } 
+            etsiMerkki(c,huffman.getVasen());
+            etsiMerkki(c,huffman.getOikea());
     }
     
     /*
@@ -254,7 +301,11 @@ public class Pakkaaja {
             //System.out.print(merkki_byte );
             //System.out.print(" " + koodi_byte + " " );
             merkistö.add(String.valueOf(huffman.getMerkki()));
-            koodisto.add(merkki);
+            
+            koodisto.add(String.valueOf(huffman.getMäärä()));
+            //koodisto.add(merkki);
+            
+            
             //code.add(merkki_byte);
             //code.add(koodi_byte);
             return;
@@ -315,6 +366,9 @@ public class Pakkaaja {
              * kahdella Byte.MAX_VALUE 11111111 kentällä.
              * Merkki on kolme bittiä ja koodi on 16 bittiä, joiden pitäisi riittää
              * headerin osuuteen.
+             * Headeriin koodi tallennetaan 16 bittisenä jossa jonon alussa on 
+             * 1 merkkillä siihen saakka kunnes alkaa oikea koodi. Erotinmerkki
+             * on 0 esim. oikea koodi 1110101 koodaus 1111111101110101
              */
             //boolean isHeader = true; // header vai content
             //boolean isMerkki = true; // merkki vai koodi
@@ -329,10 +383,13 @@ public class Pakkaaja {
                 String mbin = Integer.toBinaryString(merkistö.get(i).toString().toCharArray()[0]);
                 //int mint = Integer.parseInt(merkistö.get(i));
                 String kbin = koodisto.get(i);
-                
+                Node tmpNode = nodes.get(merkistö.get(i));
+                //kbin = String.valueOf(tmpNode.getMäärä());
+                //kbin = Integer.toBinaryString(tmpNode.getMäärä());
+                kbin = tmpNode.getBits();
                 String kbin1="";
                 String kbin2="";
-                
+                //System.out.println(merkistö.get(i) + " " + tmpNode.getBits());
                 boolean[] mbit = new boolean[8];
                 boolean[] kbit1 = new boolean[8];
                 boolean[] kbit2 = new boolean[8];
@@ -340,9 +397,16 @@ public class Pakkaaja {
                 while (mbin.length() < 8){
                     mbin = "0" + mbin;
                 }
+                boolean eka=true;
                 while (kbin.length() < 16){
-                    kbin = "0" + kbin;
+                    if (eka){
+                        kbin="0" + kbin;
+                        eka=false;
+                    }
+                //while (kbin.length() < 8){
+                    kbin = "1" + kbin;
                 }
+                
                 kbin1 = kbin.substring(0, 8);
                 kbin2 = kbin.substring(8);
                 
@@ -365,7 +429,7 @@ public class Pakkaaja {
                 fs.write(me);
                 //System.out.print(me + " ");
                 Huffman.pakattu += me + " ";
-
+                //System.out.println((char)me + " " + me + " " + kbin);
                  // Merkki
                 for(int j = 0; j < kbin1.length(); j++){
                     if (kbin1.charAt(j) == '1'){
@@ -376,13 +440,19 @@ public class Pakkaaja {
                         kbit1[j] = false;
                 }
                 he1 = new boolean[8]; 
+                
                 me = Huffman.bitsToByte(kbit1);
                 header+=Purkaja.getBitArray(me);
-                //os.write(me);
                 fs.write(me);
+                //me = tmpNode.getMäärä();
+                //fs.write(me);
+                //String s = Integer.toBinaryString(tmpNode.getMäärä());
+                
+                //System.out.println(me + " ");
                 //System.out.print(me + " ");
                 Huffman.pakattu += me + " ";
                  // Merkki
+                
                 for(int j = 0; j < kbin2.length(); j++){
                     if (kbin2.charAt(j) == '1'){
                         //bs.set(j, true);
@@ -444,13 +514,13 @@ public class Pakkaaja {
             //os.write(me);
             fs.write(-1);
             fs.write(-1);
-            fs.write(-1);
+            //fs.write(-1);
             //os.write(-1); // Erotin 1
             //os.write(-1); // Erotin 2
             //os.write(-1); // Erotin 3
             Huffman.pakattu += 255 + " ";
             Huffman.pakattu += 255 + " ";
-            Huffman.pakattu += 255 + " ";
+            //Huffman.pakattu += 255 + " ";
             //System.out.println("Header: " + header);
             //Huffman.pakattu = header;
             String tmp="";
@@ -582,6 +652,7 @@ public class Pakkaaja {
                 
             }
             */
+            /*
             System.out.println();
             long pakattu = file.length();
             
@@ -592,6 +663,8 @@ public class Pakkaaja {
             System.out.println("Pakkaamattoman tiedoston koko: " + alkup);
             System.out.println("Pakatun tiedoston koko       : " + pakattu);
             System.out.println("Koko alkuperäisestä          : " + df.format(ero) +"%");
+            * 
+            */
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
