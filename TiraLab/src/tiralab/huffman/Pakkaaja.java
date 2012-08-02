@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 /**
+ * 
  * Pakkaaja, joka perustuu Huffman koodiin
  * 
  * @author mtkortel
@@ -82,7 +83,7 @@ public class Pakkaaja {
             System.out.println(e.getMessage());
             fs.close();
         }
-        System.out.println(boolString);
+        //System.out.println(boolString);
         return boolString;
         
     }
@@ -402,7 +403,7 @@ public class Pakkaaja {
                     if (eka){
                         kbin="0" + kbin;
                         eka=false;
-                    }
+                    } else 
                 //while (kbin.length() < 8){
                     kbin = "1" + kbin;
                 }
@@ -652,6 +653,7 @@ public class Pakkaaja {
                 
             }
             */
+            /*
             System.out.println();
             long pakattu = file.length();
             
@@ -662,6 +664,8 @@ public class Pakkaaja {
             System.out.println("Pakkaamattoman tiedoston koko: " + alkup);
             System.out.println("Pakatun tiedoston koko       : " + pakattu);
             System.out.println("Koko alkuperäisestä          : " + df.format(ero) +"%");
+            * 
+            */
         } catch (Exception e){
             System.out.println(e.getMessage());
         }

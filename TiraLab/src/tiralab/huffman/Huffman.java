@@ -4,7 +4,11 @@
  */
 package tiralab.huffman;
 
+import java.io.File;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.BitSet;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -68,8 +72,46 @@ public class Huffman {
         //String tiedosto = "tiedosto.txt";
         String mode = "-";
         String tiedosto = "tiedosto.huf";
+        Calendar cal1 = Calendar.getInstance();
         Pakkaaja pakkaaja = new Pakkaaja("tiedosto.txt");
+        Calendar cal2 = Calendar.getInstance();
         Purkaja purkaja = new Purkaja("tiedosto.huf");
+        Calendar cal3 = Calendar.getInstance();
+        try{
+            //String t1 = "kuva.jpg";
+            //String t2 = "kuva.huf";
+            //String t3 = "kuva.doc";
+            
+            String t1 = "tiedosto.txt";
+            String t2 = "tiedosto.huf";
+            String t3 = "tiedosto.doc";
+            File file = new File(t1);
+            System.out.println();
+            long orig = file.length();
+            
+            file = new File(t2);
+            long comp = file.length();
+            file = new File(t3);
+            long tulos = file.length();
+            
+            double ero = 1.0*comp/orig*100;
+            DecimalFormat df = new DecimalFormat("##.##");
+            System.out.println("Pakkaamattoman tiedoston koko: " + orig);
+            System.out.println("Pakatun tiedoston koko       : " + comp);
+            System.out.println("Koko alkuperäisestä          : " + df.format(ero) +"%");
+            System.out.println("Puretun tiedoston koko       : " + tulos);
+            
+            SimpleDateFormat sdf = new SimpleDateFormat("H:mm:ss.SSS");
+            //System.out.println("Alkoi  : " + sdf.format(cal1.getTime()));
+            long eka = cal2.getTimeInMillis() - cal1.getTimeInMillis();
+            long toka = cal3.getTimeInMillis() - cal2.getTimeInMillis();
+            System.out.println("Pakkaus: " + eka + " ms.");
+            System.out.println("Purku  : " + toka + " ms.");
+            //System.out.println("pakattu: " + sdf.format(cal2.getTime()));
+            //System.out.println("Valmis : " + sdf.format(cal3.getTime()));
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
         /*
         if (mode.equals("-")){
             Purkaja purkaja = new Purkaja(tiedosto);
@@ -100,6 +142,7 @@ public class Huffman {
         }
         * 
         */
+        /*
         if (pakattu.equals(purettu)){
             System.out.println(" sama");
         } else
@@ -107,7 +150,7 @@ public class Huffman {
         
         System.out.println("Pakkaajan koko: " + pakattu.length());
         System.out.println("Purkajan koko : " + purettu.length());
-        
+        */
         
         
     }

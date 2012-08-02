@@ -19,6 +19,7 @@ public class Purkaja {
     private List<Node2> nodes;
     PriorityQueue<Node> queue = new PriorityQueue<Node>(1, comparator); 
     String koodattuTeksti="";
+    private Node puu = new Node();
     
     Node huffmanTree = null;
     
@@ -62,7 +63,7 @@ public class Purkaja {
             char chr = 0;
             int c = -1;
             String boolString="";
-            
+
             try{
                 int laskuri = 0;
                 //while((c = os.read()) != -1){
@@ -147,7 +148,7 @@ public class Purkaja {
                             ci = code.length();
                         }
                     }
-                    System.out.println((char)i1 + " Code: " + code + " kode " + kode+ " " + Integer.toBinaryString(Integer.parseInt(kode, 2)));
+                    //System.out.println((char)i1 + " Code: " + code + " kode " + kode+ " " + Integer.toBinaryString(Integer.parseInt(kode, 2)));
                     kartta.put(kode, String.valueOf((char)i1));
                     
                     
@@ -166,6 +167,7 @@ public class Purkaja {
                     */
                     
                 }
+                
                 //System.out.println(i1 + " " + i2 + " " + i3);
                 
             }
@@ -180,6 +182,7 @@ public class Purkaja {
                 //koodit.add(String.valueOf(ii1) + " " + String.valueOf(ii2));
                 //System.out.println(String.valueOf(ii1) + " " + String.valueOf(ii2));
                 boolean[] bt = Huffman.byteToBits(i1);
+                
                 intKoodit.add(i1);
                 //String koodia = Huffman.byteArrayToString(bt);
                 
@@ -224,11 +227,10 @@ public class Purkaja {
             
             String etsijä = "";
             //System.out.println(tmp);
-            System.out.println(koodattuTeksti);
-            
+            //System.out.println(koodattuTeksti);
+            boolean eka=true;
             for (int i=0; i < koodattuTeksti.length(); i++){
                 etsijä += String.valueOf(koodattuTeksti.charAt(i));
-                
                 if (kartta.containsKey(etsijä)){
                     //System.out.print(etsijä);
                     //System.out.print(kartta.get(etsijä));
@@ -236,8 +238,8 @@ public class Purkaja {
                     etsijä="";
                 }
             }
-            System.out.println();
-            System.out.println(teksti);
+            //System.out.println(teksti);
+            kirjoitaTiedosto(tiedosto, teksti);
             /*
             for(String tstr: koodit){
                 String[] t2 = tstr.split(" ");
@@ -367,6 +369,9 @@ public class Purkaja {
 
    public static String getBitArray(int charInt) {
         String bitString = Integer.toBinaryString(charInt);
+        for (int i = bitString.length(); i < 8;i++){
+            bitString = "0" + bitString;
+        }
         return bitString;
     }
 
@@ -383,6 +388,8 @@ public class Purkaja {
             String[] jono = String.valueOf(it).split("=");
             char merkki = jono[1].charAt(0);
             char[] jonossa = jono[0].toCharArray();
+            decode(merkki, jono[0]);
+            /*
             int numero=0;
             for (int p=jonossa.length-1; p >= 0; p--){
                 int ii=0;
@@ -393,6 +400,8 @@ public class Purkaja {
             }
             
             queue.add(new Node(merkki, numero));
+            * 
+            */
         }
         // Tehdään niin kauan kunnes jonossa on vain yksi jäljellä eli root
         while (queue.size() > 1){
@@ -406,6 +415,40 @@ public class Purkaja {
         return queue.poll();
         
     }
+    private Node pos;
+    
+    /**
+     * Tämän metodin pitäisi rakentaa huffman puu takaperin
+     * @param merkki
+     * @param text
+     * @return 
+     */
+    public String decode(char merkki, String text) {
+         char[] input = text.toCharArray();
+         String result = "";
+         pos = puu;
+
+         for (int i = 0; i < input.length; i++) { //for each character
+            if (pos instanceof Node) {
+               if (input[i] == '1'){
+                   if (pos.getVasen() == null)
+                       pos.setVasen(new Node());
+                  pos = ((Node) pos).getVasen();
+               }
+               if (input[i] == '0'){
+                   if (pos.getOikea() == null)
+                       pos.setOikea(new Node());
+                  pos = ((Node) pos).getOikea();
+               }
+            }
+            if (pos.isLehti()) {
+               result = result + (pos).getBits();
+               pos = puu;
+            }
+         }
+
+         return result;
+      }
 
     private void etsiPaikka(Node node, String polku){
         String merkki="";
@@ -444,10 +487,7 @@ public class Purkaja {
         }
         // Palautta juuren eli ensimmäisen Noden
         return queue.remove();
-    }
-    
-    
-    
+    }   
     private String etsiKoodi(String koodia, Node puu) {
         String merkki="";
         String tmp="";
@@ -475,8 +515,7 @@ public class Purkaja {
             }
         }
         return merkki;
-    }
-    
+    } 
     private void etsiMerkki(char c, Node huffman){
         if (huffman != null)
             if (huffman.isLehti()){
@@ -489,6 +528,23 @@ public class Purkaja {
             } 
             etsiMerkki(c,huffman.getVasen());
             etsiMerkki(c,huffman.getOikea());
+    }
+
+    private void kirjoitaTiedosto(String tiedosto, String teksti) throws FileNotFoundException {
+        int pos = tiedosto.indexOf(".");
+        String utied = tiedosto.substring(0, pos) + ".doc";
+        FileOutputStream fs = new FileOutputStream(utied);
+        try{    
+            OutputStreamWriter out = new OutputStreamWriter(fs, "UTF-8");
+            //System.out.println("Hakemisto: " + file.getCanonicalPath());
+        
+            out.write(teksti);
+            out.flush();
+            fs.close();
+        } catch (Exception e){
+            System.out.println("KirjoitaTiedosto(): " + e.getMessage());
+        }
+        
     }
     
 }
