@@ -7,7 +7,10 @@ package tiralab.huffman;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.PriorityQueue;
+//import java.util.*;
 
 /**
  * 
@@ -22,9 +25,13 @@ public class Pakkaaja {
     HashMap<String, Node> nodes;
     String tiedosto = "";
     
-    List<String>   merkistö;
-    List<String> koodisto;
-    List<String> koodit;
+    //List<String>   merkistö;
+    //List<String> koodisto;
+    //List<String> koodit;
+    CharList merkistö;
+    CharList koodisto;
+    StringList koodit;
+    
     //List<Byte> code;
     
     
@@ -37,9 +44,12 @@ public class Pakkaaja {
         nodes = new HashMap<String, Node>();
         //merkit = new BitSet(MerkkienMäärä);
         
-        merkistö = new ArrayList<String>();
-        koodisto = new ArrayList<String>();
-        koodit = new ArrayList<String>();
+        //merkistö = new ArrayList<String>();
+        //koodisto = new ArrayList<String>();
+        //koodit = new ArrayList<String>();
+        merkistö = new CharList();
+        koodisto = new CharList();
+        koodit = new StringList();
         
         this.tiedosto = tiedosto;
         pakataan(tiedosto);
@@ -58,15 +68,18 @@ public class Pakkaaja {
         //File file = new File(tiedosto);
         FileInputStream fs = new FileInputStream(tiedosto);
         //System.out.println("Hakemisto: " + file.getCanonicalPath());
-        
+        byte[] buf = new byte[2048];
         char chr = 0;
         int c = -1;
+        int n=0;
         String boolString="";
         
         try{
             int laskuri = 0;
-            //while((c = os.read()) != -1){
-            while((c = fs.read()) != -1){
+            while((n = fs.read(buf)) != -1){
+            //while((c = fs.read()) != -1){
+            for(int i=0; i < n; i++){
+                c = buf[i];
                 //if (laskuri >= 2047) {
                         //System.out.println("jotain");
                 //}
@@ -78,7 +91,7 @@ public class Pakkaaja {
                 laskuri++;
                 boolString += String.valueOf(chr);
             }
-
+            }
         } catch (Exception e){
             System.out.println(e.getMessage());
             fs.close();
@@ -194,8 +207,9 @@ public class Pakkaaja {
             //System.out.println(huffman.getMerkki()+ " - " + merkki + " - " + huffman.getMäärä());
             huffman.setBits(merkki);
             nodes.put(String.valueOf(huffman.getMerkki()), huffman);
-            merkistö.add(String.valueOf(huffman.getMerkki()));
+            merkistö.add(huffman.getMerkki());
             //koodisto.add(merkki);
+            //koodisto.add(String.valueOf(huffman.getMäärä()));
             koodisto.add(String.valueOf(huffman.getMäärä()));
             //System.out.println(huffman.getMerkki() + " " + merkki);
             return;
