@@ -361,10 +361,13 @@ public class Purkaja {
     private void tulosta(BitSet bitit){
         System.out.println();
         System.out.println("Tulosta");
+        /*
         byte[] arr = Pakkaaja.toByteArray(bitit);
             for(byte b: arr){
                 System.out.print(Integer.toBinaryString(Integer.decode(Byte.toString(b)))+ " ");
             }
+         * 
+         */
     }
 
    public static String getBitArray(int charInt) {

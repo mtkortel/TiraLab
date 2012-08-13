@@ -29,7 +29,7 @@ public class Pakkaaja {
     //List<String> koodisto;
     //List<String> koodit;
     CharList merkistö;
-    CharList koodisto;
+    IntList koodisto;
     StringList koodit;
     
     //List<Byte> code;
@@ -48,7 +48,7 @@ public class Pakkaaja {
         //koodisto = new ArrayList<String>();
         //koodit = new ArrayList<String>();
         merkistö = new CharList();
-        koodisto = new CharList();
+        koodisto = new IntList();
         koodit = new StringList();
         
         this.tiedosto = tiedosto;
@@ -210,7 +210,8 @@ public class Pakkaaja {
             merkistö.add(huffman.getMerkki());
             //koodisto.add(merkki);
             //koodisto.add(String.valueOf(huffman.getMäärä()));
-            koodisto.add(String.valueOf(huffman.getMäärä()));
+            
+            koodisto.add(huffman.getMäärä());
             //System.out.println(huffman.getMerkki() + " " + merkki);
             return;
         } 
@@ -315,9 +316,9 @@ public class Pakkaaja {
             //BitSet bs_koodi = new BitSet(8);
             //System.out.print(merkki_byte );
             //System.out.print(" " + koodi_byte + " " );
-            merkistö.add(String.valueOf(huffman.getMerkki()));
+            merkistö.add(huffman.getMerkki());
             
-            koodisto.add(String.valueOf(huffman.getMäärä()));
+            koodisto.add(huffman.getMäärä());
             //koodisto.add(merkki);
             
             
@@ -395,9 +396,9 @@ public class Pakkaaja {
             //System.out.println("Koodit   koko: " + koodit.size());
             String header="";
             for (int i=0; i < merkistö.size(); i++){
-                String mbin = Integer.toBinaryString(merkistö.get(i).toString().toCharArray()[0]);
+                String mbin = Integer.toBinaryString(merkistö.get(i));
                 //int mint = Integer.parseInt(merkistö.get(i));
-                String kbin = koodisto.get(i);
+                String kbin ;//= koodisto.get(i);
                 Node tmpNode = nodes.get(merkistö.get(i));
                 //kbin = String.valueOf(tmpNode.getMäärä());
                 //kbin = Integer.toBinaryString(tmpNode.getMäärä());
@@ -557,7 +558,7 @@ public class Pakkaaja {
             }
             //System.out.println(tmp);
             //System.out.print("Sisältö: " );
-            BitSet bs = new BitSet(8);
+            //BitSet bs = new BitSet(8);
             int nro = 0;
             int kerrat=0;
             boolean[] bits = new boolean[8];
@@ -691,6 +692,7 @@ public class Pakkaaja {
      * @param bits
      * @return 
      */
+    /*
     public static byte[] toByteArray(BitSet bits) {
         byte[] bytes = new byte[bits.length()/8+1];
         for (int i=0; i<bits.length(); i++) {
@@ -700,6 +702,6 @@ public class Pakkaaja {
         }
         return bytes;
     }
-    
+    */
     
 }
