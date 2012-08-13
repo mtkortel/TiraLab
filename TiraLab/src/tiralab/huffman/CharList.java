@@ -5,7 +5,8 @@
 package tiralab.huffman;
 
 /**
- *
+ * Char-merkkien taulukkoluokka
+ * 
  * @author mtkortel
  */
 public class CharList {
@@ -17,7 +18,11 @@ public class CharList {
         lista = new char[size];
         koko = 0;
     }
-    
+    /**
+     * Lisää merkin jonoon
+     * 
+     * @param c 
+     */
     public void add(char c){
         if (lista.length == koko){
             kasvataTaulukkoa();
@@ -25,7 +30,9 @@ public class CharList {
         lista[koko] = c;
         koko++;
     }
-
+    /**
+     * Mikäli taulukko täyttyy taulukon koko kaksinkertaistetaan
+     */
     private void kasvataTaulukkoa() {
         char[] tmp = new char[lista.length * 2];
         for(int i=0; i < lista.length; i++){
@@ -33,12 +40,21 @@ public class CharList {
         }
         lista = tmp;
     }
+    /**
+     * Palautaa parametrin osoittamassa kohdassa olevan merkin
+     * @param i
+     * @return 
+     */
     public char get(int i){
         if (i < koko){
             return lista[i];
         }
         throw new IndexOutOfBoundsException("Haku yli indexin");
     }
+    /**
+     * Palautaa taulukosta käytetyn ko'on
+     * @return 
+     */
     public int size(){
         return koko;
     }
