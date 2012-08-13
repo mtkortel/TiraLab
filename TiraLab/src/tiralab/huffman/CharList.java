@@ -23,6 +23,7 @@ public class CharList {
             kasvataTaulukkoa();
         }
         lista[koko] = c;
+        koko++;
     }
 
     private void kasvataTaulukkoa() {

@@ -71,20 +71,23 @@ public class Huffman {
         //String mode = "+";
         //String tiedosto = "tiedosto.txt";
         String mode = "-";
-        String tiedosto = "tiedosto.huf";
+        //String tiedosto = "tiedosto.huf";
+        String tiedosto = "warandpeace";
         Calendar cal1 = Calendar.getInstance();
-        Pakkaaja pakkaaja = new Pakkaaja("tiedosto.txt");
+        //Pakkaaja pakkaaja = new Pakkaaja("tiedosto.txt");
+        Pakkaaja pakkaaja = new Pakkaaja(tiedosto+".txt");
         Calendar cal2 = Calendar.getInstance();
-        Purkaja purkaja = new Purkaja("tiedosto.huf");
+        //Purkaja purkaja = new Purkaja("tiedosto.huf");
+        Purkaja purkaja = new Purkaja(tiedosto+".huf");
         Calendar cal3 = Calendar.getInstance();
         try{
             //String t1 = "kuva.jpg";
             //String t2 = "kuva.huf";
             //String t3 = "kuva.doc";
             
-            String t1 = "tiedosto.txt";
-            String t2 = "tiedosto.huf";
-            String t3 = "tiedosto.doc";
+            String t1 = tiedosto+".txt";
+            String t2 = tiedosto+".huf";
+            String t3 = tiedosto+".doc";
             File file = new File(t1);
             System.out.println();
             long orig = file.length();
@@ -98,8 +101,8 @@ public class Huffman {
             DecimalFormat df = new DecimalFormat("##.##");
             System.out.println("Pakkaamattoman tiedoston koko: " + orig);
             System.out.println("Pakatun tiedoston koko       : " + comp);
-            System.out.println("Koko alkuperäisestä          : " + df.format(ero) +"%");
             System.out.println("Puretun tiedoston koko       : " + tulos);
+            System.out.println("Koko alkuperäisestä          : " + df.format(ero) +"%");
             
             SimpleDateFormat sdf = new SimpleDateFormat("H:mm:ss.SSS");
             //System.out.println("Alkoi  : " + sdf.format(cal1.getTime()));

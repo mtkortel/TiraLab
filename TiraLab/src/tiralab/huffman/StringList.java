@@ -23,6 +23,7 @@ public class StringList {
             kasvataTaulukkoa();
         }
         lista[koko] = s;
+        koko++;
     }
 
     private void kasvataTaulukkoa() {

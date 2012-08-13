@@ -5,8 +5,6 @@
 package tiralab.huffman;
 
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.text.DecimalFormat;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.PriorityQueue;
@@ -399,7 +397,7 @@ public class Pakkaaja {
                 String mbin = Integer.toBinaryString(merkistö.get(i));
                 //int mint = Integer.parseInt(merkistö.get(i));
                 String kbin ;//= koodisto.get(i);
-                Node tmpNode = nodes.get(merkistö.get(i));
+                Node tmpNode = nodes.get(String.valueOf(merkistö.get(i)));
                 //kbin = String.valueOf(tmpNode.getMäärä());
                 //kbin = Integer.toBinaryString(tmpNode.getMäärä());
                 kbin = tmpNode.getBits();

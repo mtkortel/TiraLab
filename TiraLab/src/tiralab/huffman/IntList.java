@@ -23,6 +23,7 @@ public class IntList {
             kasvataTaulukkoa();
         }
         lista[koko] = c;
+        koko++;
     }
 
     private void kasvataTaulukkoa() {
