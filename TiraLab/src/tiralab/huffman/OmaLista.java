@@ -9,7 +9,7 @@ package tiralab.huffman;
  *
  * @author marko
  */
-public interface IOmaLista {
+public interface OmaLista {
     public abstract void add(Object obj);
     public abstract Object get(int i);
 }

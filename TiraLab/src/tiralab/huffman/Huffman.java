@@ -22,9 +22,9 @@ public class Huffman {
     public static String purettu = "";
     public static void main(String[] args){
 
-        String mode = "-";
+        String mode = "+";
         String tiedosto = "warandpeace";
-
+        tiedosto = "tiedosto";
         /*
         if (args.length != 2){
             System.out.println("compress  : Pakkaaja + tiedosto.txt");

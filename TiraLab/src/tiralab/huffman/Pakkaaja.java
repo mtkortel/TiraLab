@@ -5,6 +5,7 @@
 package tiralab.huffman;
 
 import java.io.*;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.PriorityQueue;
@@ -50,6 +51,7 @@ public class Pakkaaja {
         koodit = new StringList();
         
         this.tiedosto = tiedosto;
+        System.out.println("Alkaa");
         pakataan(tiedosto);
         kirjoita(tiedosto);
     }
@@ -64,7 +66,10 @@ public class Pakkaaja {
      */
     private String lueTekstiTiedosto(String tiedosto) throws FileNotFoundException, IOException {
         //File file = new File(tiedosto);
-        FileInputStream fs = new FileInputStream(tiedosto);
+        //FileInputStream fs = new FileInputStream(tiedosto);
+        //DataInputStream ds = new DataInputStream(new BufferedInputStream(fs));
+        FileReader file = new FileReader(new File(tiedosto));
+        BufferedReader ds = new BufferedReader(file);
         //System.out.println("Hakemisto: " + file.getCanonicalPath());
         byte[] buf = new byte[2048];
         char chr = 0;
@@ -74,7 +79,8 @@ public class Pakkaaja {
         
         try{
             int laskuri = 0;
-            while((n = fs.read(buf)) != -1){
+            
+            while((n = ds.read()) != -1){
             //while((c = fs.read()) != -1){
             for(int i=0; i < n; i++){
                 c = buf[i];
@@ -92,7 +98,7 @@ public class Pakkaaja {
             }
         } catch (Exception e){
             System.out.println(e.getMessage());
-            fs.close();
+            //fs.close();
         }
         //System.out.println(boolString);
         return boolString;
@@ -152,11 +158,24 @@ public class Pakkaaja {
      */
     private void pakataan(String tiedosto) {
         try{
+            Calendar c1 = Calendar.getInstance();
             String teksti = lueTekstiTiedosto(tiedosto);
+            Calendar c2 = Calendar.getInstance();
+            System.out.println("Kesto 1: " + (c2.getTimeInMillis() -
+                    c1.getTimeInMillis()));
             int[] kerrat  = teeKertaTaulukko(teksti);
+            Calendar c3 = Calendar.getInstance();
+            System.out.println("Kesto 2: " + (c3.getTimeInMillis() -
+                    c2.getTimeInMillis()));
             // Tiedosto luettu loppuun rakennetaan puu
             Node huffman  = rakennaPuu(kerrat);
+            Calendar c4 = Calendar.getInstance();
+            System.out.println("Kesto 3: " + (c4.getTimeInMillis() -
+                    c3.getTimeInMillis()));
             päivitäHuffmanPuu(huffman, "0");
+            Calendar c5 = Calendar.getInstance();
+            System.out.println("Kesto 5: " + (c5.getTimeInMillis() -
+                    c4.getTimeInMillis()));
             //System.out.println("");
             //List<Byte> koodia = new ArrayList<Byte>();
             //koodia = tulostaTiedosto(teksti, huffman, koodia);
@@ -254,7 +273,7 @@ public class Pakkaaja {
         //return text;
     }
     private void etsiMerkki(char c, Node huffman){
-        if (huffman != null)
+        if (huffman != null){
             if (huffman.isLehti()){
                 //System.out.println(huffman.getMerkki()+ " - " + merkki + " - " + huffman.getMäärä());
                 char h = huffman.getMerkki();
@@ -265,6 +284,7 @@ public class Pakkaaja {
             } 
             etsiMerkki(c,huffman.getVasen());
             etsiMerkki(c,huffman.getOikea());
+        }
     }
     
     /*
