@@ -24,7 +24,8 @@ public class Huffman {
 
         String mode = "+";
         String tiedosto = "warandpeace";
-        tiedosto = "tiedosto";
+        //tiedosto = "tiedosto";
+        
         /*
         if (args.length != 2){
             System.out.println("compress  : Pakkaaja + tiedosto.txt");

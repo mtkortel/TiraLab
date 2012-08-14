@@ -68,10 +68,14 @@ public class Pakkaaja {
         //File file = new File(tiedosto);
         //FileInputStream fs = new FileInputStream(tiedosto);
         //DataInputStream ds = new DataInputStream(new BufferedInputStream(fs));
+        File f = new File(tiedosto);
+        long kertoja = f.length()/8192;
+        
         FileReader file = new FileReader(new File(tiedosto));
         BufferedReader ds = new BufferedReader(file);
         //System.out.println("Hakemisto: " + file.getCanonicalPath());
         byte[] buf = new byte[2048];
+        char[] cbuf = new char[8192];
         char chr = 0;
         int c = -1;
         int n=0;
@@ -79,22 +83,33 @@ public class Pakkaaja {
         
         try{
             int laskuri = 0;
-            
-            while((n = ds.read()) != -1){
-            //while((c = fs.read()) != -1){
-            for(int i=0; i < n; i++){
-                c = buf[i];
-                //if (laskuri >= 2047) {
-                        //System.out.println("jotain");
-                //}
-                //intList.add(c);
-                chr = (char)c;
-                //boolString = getBitArray(c);
-                //System.out.print(c);
-                Huffman.pakattu += c + " ";
+            Calendar c1 = Calendar.getInstance();
+            while((n = ds.read(cbuf)) != -1){
+                Calendar c2 = Calendar.getInstance();
                 laskuri++;
-                boolString += String.valueOf(chr);
-            }
+                System.out.println(laskuri+"/"+kertoja + " - kesto " +
+                        (c2.getTimeInMillis() - c1.getTimeInMillis()) + " ms.");
+                c1 = c2;
+                //while((c = fs.read()) != -1){
+                //System.out.println((char)n);
+                //boolString += String.valueOf((char)n);
+                
+                for(int i=0; i < cbuf.length; i++){
+                    if (cbuf[i]!=0){
+                        c = cbuf[i];
+                        //if (laskuri >= 2047) {
+                        
+                        //}
+                        //intList.add(c);
+                        chr = (char)c;
+                        //System.out.println(chr);
+                        //boolString = getBitArray(c);
+                        //System.out.print(c);
+                        Huffman.pakattu += c + " ";
+                        
+                        boolString += String.valueOf(chr);
+                    }
+                }
             }
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -117,11 +132,13 @@ public class Pakkaaja {
             kerrat[teksti.toCharArray()[i]]++; // lisätään esiintymiskerta merkille
             
         }
+        /*
         for(int i=0; i< kerrat.length; i++){
             if (kerrat[i]>0){
                 
             }
         }
+        */ 
         return kerrat;
     }
     /**
