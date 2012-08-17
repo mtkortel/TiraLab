@@ -21,9 +21,10 @@ public class Pakkaaja {
     ///TODO: Nyt tallentaa kaikki merkit omina tavuina, kun pitäisi saada bittijonoksi
     static Comparator<Node> comparator = new NodeComparator();
     static int MerkkienMäärä = 256;
+    final int buffer_size = 1000*1024;
     HashMap<String, Node> nodes;
     String tiedosto = "";
-    
+    int[] kerrat = new int[MerkkienMäärä];
     //List<String>   merkistö;
     //List<String> koodisto;
     //List<String> koodit;
@@ -69,13 +70,13 @@ public class Pakkaaja {
         //FileInputStream fs = new FileInputStream(tiedosto);
         //DataInputStream ds = new DataInputStream(new BufferedInputStream(fs));
         File f = new File(tiedosto);
-        long kertoja = f.length()/8192;
+        double kertoja = f.length()/buffer_size;
         
         FileReader file = new FileReader(new File(tiedosto));
         BufferedReader ds = new BufferedReader(file);
         //System.out.println("Hakemisto: " + file.getCanonicalPath());
         byte[] buf = new byte[2048];
-        char[] cbuf = new char[8192];
+        char[] cbuf = new char[buffer_size];
         char chr = 0;
         int c = -1;
         int n=0;
@@ -93,21 +94,28 @@ public class Pakkaaja {
                 //while((c = fs.read()) != -1){
                 //System.out.println((char)n);
                 //boolString += String.valueOf((char)n);
-                
+                int luku = 0;
                 for(int i=0; i < cbuf.length; i++){
                     if (cbuf[i]!=0){
                         c = cbuf[i];
-                        //if (laskuri >= 2047) {
-                        
-                        //}
-                        //intList.add(c);
-                        chr = (char)c;
-                        //System.out.println(chr);
-                        //boolString = getBitArray(c);
-                        //System.out.print(c);
-                        Huffman.pakattu += c + " ";
-                        
-                        boolString += String.valueOf(chr);
+                        if (c <= 255){
+                            luku++;
+                            //if (laskuri >= 2047) {
+
+                            //}
+                            //intList.add(c);
+                            chr = (char)c;
+                            //System.out.println(chr);
+                            //boolString = getBitArray(c);
+                            //System.out.print(c);
+                            //Huffman.pakattu += c + " ";
+                            //System.out.print(chr + " " + c + " ");
+                            kerrat[c]++;
+                            boolString += String.valueOf(chr);
+                            if (luku%100 == 0){
+                                System.out.println("Valmis " + luku + " riviä");
+                            }
+                        }
                     }
                 }
             }
@@ -180,7 +188,7 @@ public class Pakkaaja {
             Calendar c2 = Calendar.getInstance();
             System.out.println("Kesto 1: " + (c2.getTimeInMillis() -
                     c1.getTimeInMillis()));
-            int[] kerrat  = teeKertaTaulukko(teksti);
+            //int[] kerrat  = teeKertaTaulukko(teksti);
             Calendar c3 = Calendar.getInstance();
             System.out.println("Kesto 2: " + (c3.getTimeInMillis() -
                     c2.getTimeInMillis()));
