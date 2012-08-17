@@ -7,8 +7,9 @@ package tiralab.huffman;
 import java.io.*;
 import java.util.Calendar;
 import java.util.Comparator;
-import java.util.HashMap;
+//import java.util.HashMap;
 import java.util.PriorityQueue;
+import tiralab.huffman.rakenne.HashMap;
 //import java.util.*;
 
 /**
@@ -158,12 +159,12 @@ public class Pakkaaja {
     public static Node rakennaPuu(int[] kerrat) {
         PriorityQueue<Node> queue = new PriorityQueue<Node>(1, comparator); 
         // Lisätään jonoon kaikki puun lehdet
-        for (char i = 0; i < MerkkienMäärä; i++)
+        for (char i = 0; i < MerkkienMäärä; i++){
             if (kerrat[i] > 0){
                 queue.add(new Node(i, kerrat[i]));
                 //System.out.println((char)i + " " + kerrat[i]);
             }
-        
+        }
         // Tehdään niin kauan kunnes jonossa on vain yksi jäljellä eli root
         while (queue.size() > 1){
             Node vasen = queue.remove(); // Pienin
