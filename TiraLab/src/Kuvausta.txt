@@ -1,34 +1,5 @@
-Aihe: A*
+Huffman koodaus
 
-Tarkoituksena on toteuttaa ohjelma, joka löytää lyhimmän 
-reitin 2-ulotteisen ruudukon kahden ruudun välillä. 
+Tiedoston luku:
+http://www.exampledepot.com/egs/java.io/file2bytearray.html
 
-Osa ruuduista on esteitä joiden kautta ei voi kulkea.
-Etsintä suoritetaan A*-algoritmilla (A Star).
-
-Liikkuminen on sallittua jos seuraavat ehdot täyttyvät:
-- Kohderuutu on lähtöruudun yksi kahdeksasta naapurista
-- Kohderuutu ei ole esteruutu
-- Kummankaan ruudun yhteinen naapuri ei ole esteruutu
-
-Liikkumisen kustannus:
-- pystysuuntaan 1
-- vaakasuuntaan 1
-- vinoittain sqrt(2) eli noin 1.41
-
-Pseudokoodi TiRa-materiaalista:
-Astar(G,w,a,b)
-// G tutkittava verkko, a lähtösolmu, b kohdesolmu ja w kaaripainot kertova funktio
-for kaikille solmuille v 2 V
-    alkuun[v] = 1 
-    loppuun[v] = arvioi suora etäisyys v ; b
-    polku[v] = NIL
-    alkuun[a] = 0
-    S = ; 
-    while ( solmu b ei ole vielä joukossa S )
-        valitse solmu u 2 V \ S, jolle alkuun[v]+loppuun[v] on pienin
-        S = S [ {u}
-        for jokaiselle solmulle v 2 Adj[u] // kaikille u:n vierussolmuille v
-            if alkuun[v] > alkuun[u] + w(u,v)
-                alkuun[v] = alkuun[u]+w(u,v)
-            polku[v] = u
