@@ -24,7 +24,7 @@ public class Huffman {
 
         String mode = "+";
         String tiedosto = "warandpeace";
-        tiedosto = "tiedosto";
+        //tiedosto = "tiedosto";
         
         /*
         if (args.length != 2){

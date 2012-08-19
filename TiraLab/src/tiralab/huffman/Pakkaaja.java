@@ -21,11 +21,13 @@ import tiralab.huffman.rakenne.HashMap;
 public class Pakkaaja {
     ///TODO: Nyt tallentaa kaikki merkit omina tavuina, kun pitäisi saada bittijonoksi
     static Comparator<Node> comparator = new NodeComparator();
-    static int MerkkienMäärä = 256;
+    //static int MerkkienMäärä = 256;
+    static int MerkkienMäärä = 65536;
     final int buffer_size = 1000*1024;
     HashMap<String, Node> nodes;
     String tiedosto = "";
     int[] kerrat = new int[MerkkienMäärä];
+    int virheet = 0;
     //List<String>   merkistö;
     //List<String> koodisto;
     //List<String> koodit;
@@ -66,16 +68,33 @@ public class Pakkaaja {
      * @return tiedoston sisältä teksti merkkijonona
      * @throws FileNotFoundException
      */
-    private String lueTekstiTiedosto(String tiedosto) throws FileNotFoundException, IOException {
+    private String lueTekstiTiedosto(String tiedosto) throws IOException {
+        File file = new File(tiedosto);
+        byte[] array = FileUtils.getBytesFromFile(file);
+        StringBuilder sb = new StringBuilder();
+        for (byte b: array){
+            int num = b;
+            if (num >= 0 && num < MerkkienMäärä){
+                sb.append((char)b); 
+                kerrat[num]++;
+                //System.out.print((char)b);
+            } else {
+                System.out.println("Virhe: " + num);
+                virheet++;
+            }
+        }
+        
+        return sb.toString();
         //File file = new File(tiedosto);
         //FileInputStream fs = new FileInputStream(tiedosto);
         //DataInputStream ds = new DataInputStream(new BufferedInputStream(fs));
+        /*
         File f = new File(tiedosto);
         double kertoja = f.length()/buffer_size;
         
         FileReader file = new FileReader(new File(tiedosto));
         BufferedReader ds = new BufferedReader(file);
-        //System.out.println("Hakemisto: " + file.getCanonicalPath());
+        System.out.println("Hakemisto: " + file.getCanonicalPath());
         byte[] buf = new byte[2048];
         char[] cbuf = new char[buffer_size];
         char chr = 0;
@@ -120,13 +139,15 @@ public class Pakkaaja {
                     }
                 }
             }
+        
         } catch (Exception e){
             System.out.println(e.getMessage());
             //fs.close();
         }
+         
         //System.out.println(boolString);
         return boolString;
-        
+        */
     }
     /**
      * Tekee tekstistä taulukon merkkien ilmenemismäärien mukaan
@@ -186,6 +207,7 @@ public class Pakkaaja {
         try{
             Calendar c1 = Calendar.getInstance();
             String teksti = lueTekstiTiedosto(tiedosto);
+            System.out.println("Virheellisiä merkkejä oli " + virheet + " kpl.");
             Calendar c2 = Calendar.getInstance();
             System.out.println("Kesto 1: " + (c2.getTimeInMillis() -
                     c1.getTimeInMillis()));
