@@ -180,12 +180,16 @@ public class Pakkaaja {
     public static Node rakennaPuu(int[] kerrat) {
         PriorityQueue<Node> queue = new PriorityQueue<Node>(1, comparator); 
         // Lisätään jonoon kaikki puun lehdet
+        Calendar c1 = Calendar.getInstance();
         for (char i = 0; i < MerkkienMäärä; i++){
             if (kerrat[i] > 0){
                 queue.add(new Node(i, kerrat[i]));
                 //System.out.println((char)i + " " + kerrat[i]);
             }
         }
+        Calendar c2 = Calendar.getInstance();
+            System.out.println("Kesto 1: " + (c2.getTimeInMillis() -
+                    c1.getTimeInMillis()));
         // Tehdään niin kauan kunnes jonossa on vain yksi jäljellä eli root
         while (queue.size() > 1){
             Node vasen = queue.remove(); // Pienin
@@ -193,6 +197,9 @@ public class Pakkaaja {
             Node uusi = new Node(vasen, oikea);
             queue.add(uusi); // Lisätään uusi node jonoon
         }
+        Calendar c3 = Calendar.getInstance();
+            System.out.println("Kesto 1: " + (c3.getTimeInMillis() -
+                    c2.getTimeInMillis()));
         // Palautta juuren eli ensimmäisen Noden
         //return queue.remove();
         return queue.poll();
@@ -211,6 +218,7 @@ public class Pakkaaja {
             Calendar c2 = Calendar.getInstance();
             System.out.println("Kesto 1: " + (c2.getTimeInMillis() -
                     c1.getTimeInMillis()));
+            System.gc();
             //int[] kerrat  = teeKertaTaulukko(teksti);
             Calendar c3 = Calendar.getInstance();
             System.out.println("Kesto 2: " + (c3.getTimeInMillis() -
