@@ -5,9 +5,19 @@
 package tiralab.huffman;
 
 import java.io.*;
-import java.math.BigInteger;
-import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Set;
+import java.util.TreeMap;
+import tiralab.huffman.rakenne.HashMap;
+import tiralab.huffman.rakenne.StringArray;
+
 
 /**
  *
@@ -30,6 +40,16 @@ public class Purkaja {
         String str = puretaan(tiedosto);
     }
 
+    private IntList lueTiedosto(String tiedosto) throws IOException{
+        File file = new File(tiedosto);
+        byte[] array = FileUtils.getBytesFromFile(file);
+        StringBuilder sb = new StringBuilder();
+        IntList lista = new IntList();
+        for (byte b: array){
+            lista.add(b);
+        }
+        return lista;
+    }
     /**
      * Metodi lukee tiedoston tavuina ja palauttaa listan niistä
      * 
@@ -52,11 +72,11 @@ public class Purkaja {
             int j=0;
             //System.out.println("Jotain");
             /*
-             * Luetaan ensin 24 bittiä jotka muodostuvat seuraavasti.
+             * Luetaan ensin 32 bittiä jotka muodostuvat seuraavasti.
              *  8 bittiä = merkki
-             * 16 bittiä = huffmankoodi
+             * 24 bittiä = huffmankoodi
              * 
-             * Kun kaikki 24 bittiä on "päällä", on löydetty erotinmerkki.
+             * Kun kaikki 32 bittiä on "päällä", on löydetty erotinmerkki.
              * Tämän jälkeen huffmankoodattu teksti on tallennettu 16 bitin
              * lohkoissa.
              */
@@ -68,9 +88,6 @@ public class Purkaja {
                 int laskuri = 0;
                 //while((c = os.read()) != -1){
                 while((c = fs.read()) != -1){
-                    //if (laskuri >= 2047) {
-                          //System.out.println("jotain");
-                    //}
                     intList.add(c);
                     chr = (char)c;
                     boolString = getBitArray(c);
@@ -100,28 +117,42 @@ public class Purkaja {
         Node puu=null;
         try{    
             List<Integer> lista = luePurettavaTiedosto(tiedosto);
-            Map<String, String> kartta = new HashMap<String, String>();
-            Map<Integer, String> kartta2 = new HashMap<Integer, String>();
+            //IntList listat = lueTiedosto(tiedosto);
+            //HashMap<String, String> kartta = new HashMap<String, String>();
+            StringArray kartta = new StringArray();
+            
+            Map<Integer, String> kartta2 = new java.util.HashMap<Integer, String>();
+            
             String koodi = "";
-            List<Integer> intKoodit = new ArrayList<Integer>();
+            //List<Integer> intKoodit = new ArrayList<Integer>();
+            IntList intKoodit = new IntList();
             int codeStart = 0;
             // Etsitään ensin header osion tiedot.
-            // Tiedetään että header ko'ostuu 24 bitistä
-            String header  ="";
-            for(int i=0; i<lista.size(); i=i+3){
+            // Tiedetään että header ko'ostuu 32 bitistä
+            /*
+            for(int i=0; i<lista.size(); i=i+4){
                 int i1 = lista.get(i);
                 int i2 = lista.get(i+1);
                 int i3 = lista.get(i+2);
+                int i4 = lista.get(i+3);
+                System.out.println(i + " " + i1 + " " + i2 + " " + i3 + " " + i4);
+            }
+            */
+            
+            String header  ="";
+            for(int i=0; i<lista.size(); i=i+4){
+                int i1 = lista.get(i);
+                int i2 = lista.get(i+1);
+                int i3 = lista.get(i+2);
+                int i4 = lista.get(i+3);
                 
-                if (i1 == 255 && i2 == 255 ){//&& i3 == 255){
-                    codeStart = i+2;
+                if (i1 == 255 && i2 == 255 && i3 == 255 && i4 == 255){
+                    codeStart = i+4;
                     i = lista.size();
-                    
                 } else {
-                    //System.out.println(i1 + " " + i2);
-                    //System.out.print(i/3+1 + " Merkki: " + (char)i1 + " " );
                     String kode1 = getBitArray(i2);
                     String kode2 = getBitArray(i3);
+                    String kode3 = getBitArray(i4);
                     String code = "";
                     if (kode1.equals("0")){
                         code = getBitArray(i3);
@@ -130,95 +161,43 @@ public class Purkaja {
                         for (int mi = kode2.length(); mi <8; mi++){
                             code += "0";
                         }
+                        for (int mi = kode3.length(); mi <8; mi++){
+                            code += "0";
+                        }
+                        
                         code += getBitArray(i3);
+                        code += getBitArray(i4);
+                        
                     }
-                    int te = Integer.parseInt(code, 2);
-                    //System.out.println((char)i1 + " " + Integer.toBinaryString(te) + " " + code);
-                    //kartta.put(code, String.valueOf((char)i1));
                     /*
                      * Etsitään erotinmerkki
                      */
                     String kode="";
-                    boolean tosi=true;
                     for(int ci=0; ci < code.length(); ci++){
                         if (code.charAt(ci) == '0'){
-                            
                             kode = code.substring(ci+1);
-                                    
                             ci = code.length();
                         }
                     }
+                    String s = "" + kode + " " + i1;
                     //System.out.println((char)i1 + " Code: " + code + " kode " + kode+ " " + Integer.toBinaryString(Integer.parseInt(kode, 2)));
                     kartta.put(kode, String.valueOf((char)i1));
-                    
-                    
-                    //kartta.put(getBitArray(i2) + getBitArray(i3), String.valueOf((char)i1));
-                    //System.out.println((char)i1 + " " + i2);
-                    /*
-                    boolean[] b1 = Huffman.byteToBits(i2);
-                    boolean[] b2 = Huffman.byteToBits(i3);
-                    String kk = Huffman.byteArrayToString(b1)+Huffman.byteArrayToString(b2);
-                    kartta.put(kk, String.valueOf((char)i1));
-                    
-                    kartta2.put(i2+i3, String.valueOf((char)i1));
-                    System.out.print((char)i1 + " " + i2 + " " + i3 + " " + kk + " ");
-                    System.out.println(Integer.parseInt(kk, 2));
-                    kerrat.put(i1, Integer.parseInt(kk, 2));
-                    */
-                    
+                    //System.out.println(String.valueOf((char)i1 + " " + kode + " " ));
+                   
                 }
                 
                 //System.out.println(i1 + " " + i2 + " " + i3);
                 
             }
-            huffmanTree = teePuu(kartta);
             // Koodattu teksti
-            // Tiedetään että jokainen merkki on koodattu 16 bitillä
             String tmp = "";
+            Node huffKartta = teeHuffman(kartta);
+            
             for (int i=codeStart; i<lista.size(); i++){
                 int i1 = lista.get(i);
-                //int ii1 = lista.get(i);
-                //int ii2 = lista.get(i+1);
-                //koodit.add(String.valueOf(ii1) + " " + String.valueOf(ii2));
-                //System.out.println(String.valueOf(ii1) + " " + String.valueOf(ii2));
-                boolean[] bt = Huffman.byteToBits(i1);
-                
+                //boolean[] bt = Huffman.byteToBits(i1);
                 intKoodit.add(i1);
-                //String koodia = Huffman.byteArrayToString(bt);
-                
-                //int i2 = intKoodit.get(i+1);
-                
-                
                 koodattuTeksti += getBitArray(i1);
-                
-                //String merkki = etsiKoodi(koodia, puu);
-                //System.out.print(merkki);
-                
-                //tmp += Integer.toBinaryString(i1);
-                /*
-                boolean[] bitit = Huffman.byteToBits(i1);
-                for(int m=0; m<bitit.length; m++){
-                    if (bitit[m]){
-                        tmp += "1";
-                    } else 
-                        tmp += "0";
-                }
-                * 
-                */
-                /*
-                for (Node2 node: nodes){
-                    int i5 = node.getCode1();
-                    int j5 = node.getCode2();
-                    if (node.getCode1()==ii1 && node.getCode2()==ii2){
-                        System.out.print(node.getMerkki());
-                    }
-                }*/
-                //int i2 = lista.get(i+1);
-                
-                //String tmp = getBitArray(i1) + getBitArray(i2);
-                //System.out.println("Koodi : " + getBitArray(i1) +" "+ getBitArray(i2)+ " " + i1 + " " + i2 + " " + (char)i1 + " " + (char)i2);
-                //System.out.print(kartta.get(getBitArray(i1) + getBitArray(i2)));
-                //teksti+=kartta.get(getBitArray(i1) + getBitArray(i2));
             }
             //System.out.println(header);
             //System.out.println(tmp);
@@ -232,10 +211,12 @@ public class Purkaja {
             for (int i=0; i < koodattuTeksti.length(); i++){
                 etsijä += String.valueOf(koodattuTeksti.charAt(i));
                 if (kartta.containsKey(etsijä)){
-                    //System.out.print(etsijä);
+                    System.out.print(etsijä);
                     //System.out.print(kartta.get(etsijä));
                     teksti += kartta.get(etsijä);
                     etsijä="";
+                } else {
+                   // System.out.println(etsijä);
                 }
             }
             //System.out.println(teksti);
@@ -254,10 +235,11 @@ public class Purkaja {
             }
             */
            
-            
+            System.out.println(teksti);
             //System.out.println(header);
         } catch(Exception e){
             System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         
         return teksti;
@@ -277,7 +259,7 @@ public class Purkaja {
         String s = "";
         String bt = "";
         int i = 0;
-        BitSet setti = new BitSet(8);
+        //BitSet setti = new BitSet(8);
         for(byte b: lista){
             s += Integer.toBinaryString(Integer.decode(Byte.toString(b))) + " ";
             bt += b + " " ;
@@ -372,52 +354,14 @@ public class Purkaja {
 
    public static String getBitArray(int charInt) {
         String bitString = Integer.toBinaryString(charInt);
+        int j = bitString.length();
         for (int i = bitString.length(); i < 8;i++){
             bitString = "0" + bitString;
         }
         return bitString;
     }
 
-    private Node teePuu(Map<String, String> kertaKartta) {
-        PriorityQueue<Node> queue = new PriorityQueue<Node>(1, comparator); 
-        int määrä=0;
-        Set<String> keys = kertaKartta.keySet();
-        Collection<String> values = kertaKartta.values();
-        Set set = kertaKartta.entrySet();
-        
-        Iterator iter = set.iterator();
-        while(iter.hasNext()){
-            Object it = iter.next();
-            String[] jono = String.valueOf(it).split("=");
-            char merkki = jono[1].charAt(0);
-            char[] jonossa = jono[0].toCharArray();
-            decode(merkki, jono[0]);
-            /*
-            int numero=0;
-            for (int p=jonossa.length-1; p >= 0; p--){
-                int ii=0;
-                if(jonossa[p]=='1'){
-                    ii=1;
-                }
-                numero += ii*Math.pow(2, ((jonossa.length-1)-p));
-            }
-            
-            queue.add(new Node(merkki, numero));
-            * 
-            */
-        }
-        // Tehdään niin kauan kunnes jonossa on vain yksi jäljellä eli root
-        while (queue.size() > 1){
-            Node vasen = queue.remove(); // Pienin
-            Node oikea = queue.remove(); // Pienin (ed. toiseksi pienin)
-            Node uusi = new Node(vasen, oikea);
-            queue.add(uusi); // Lisätään uusi node jonoon
-        }
-        // Palautta juuren eli ensimmäisen Noden
-        //return queue.remove();
-        return queue.poll();
-        
-    }
+    
     private Node pos;
     
     /**
@@ -548,6 +492,33 @@ public class Purkaja {
             System.out.println("KirjoitaTiedosto(): " + e.getMessage());
         }
         
+    }
+    Node n2 = new Node();
+    
+    private void reverseHuffmanPuu(Node huffman, String merkki, String koodi, int cnt) {
+        char c = koodi.charAt(cnt);
+        if (c=='0'){// to Left
+            if (huffman.getVasen() != null){ // on jo oikealla tavaraa
+                
+            } else { //oikea on tyhjä
+                Node tmp = new Node();
+                huffman.setVasen(tmp);
+                
+            }
+        } else { // to Right
+            
+        }
+    }
+
+    private Node teeHuffman(StringArray kartta) {
+        Node n1 = new Node();
+        for(int i = 0; i < kartta.length; i++){
+            String s1 = kartta.keys()[i];
+            String s2 = kartta.values()[i];
+            Node leaf = new Node();
+        }
+        
+        return n1;
     }
     
 }

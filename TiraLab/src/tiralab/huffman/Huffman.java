@@ -7,10 +7,7 @@ package tiralab.huffman;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.BitSet;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Scanner;
 
 /**
  *
@@ -24,7 +21,7 @@ public class Huffman {
 
         String mode = "+";
         String tiedosto = "warandpeace";
-        //tiedosto = "tiedosto";
+        tiedosto = "tiedosto";
         
         /*
         if (args.length != 2){
@@ -35,24 +32,16 @@ public class Huffman {
         String mode = args[0];
         String tiedosto = args[1];
         */
-        Calendar cal1 = null;
-        Calendar cal2 = null;
-        long kesto = 0;
         if (mode.equals("+")){
-            cal1 = Calendar.getInstance();
             Pakkaaja pakkaaja = new Pakkaaja(tiedosto+".txt");
-            cal2 = Calendar.getInstance();
-        } else if (mode.equals("-")){
-            cal1 = Calendar.getInstance();
+        //} else if (mode.equals("-")){
             Purkaja purkaja = new Purkaja(tiedosto+".huf");
-            cal2 = Calendar.getInstance();
         } else {
             System.out.println("Invalid mode!");
             System.out.println("compress  : Pakkaaja + tiedosto.txt");
             System.out.println("uncompress: Pakkaaja - tiedosto.txt");
             System.exit(-1);
         }
-        kesto = cal2.getTimeInMillis() - cal1.getTimeInMillis();
         try{
             String t1 = tiedosto+".txt";
             String t2 = tiedosto+".huf";
@@ -71,12 +60,10 @@ public class Huffman {
             if (mode.equals("+")){
                 System.out.println("Pakkaamattoman tiedoston koko: " + orig);
                 System.out.println("Pakatun tiedoston koko       : " + comp);
-            } else{ 
+            //} else{ 
                 System.out.println("Puretun tiedoston koko       : " + tulos);
                 System.out.println("Koko alkuperäisestä          : " + df.format(ero) +"%");
             }
-            SimpleDateFormat sdf = new SimpleDateFormat("H:mm:ss.SSS");
-            System.out.println("Operaation kesto: " + kesto + " ms.");
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
@@ -92,8 +79,9 @@ public class Huffman {
         for(int m=0; m < bt.length; m++){
             if(bt[m]){
                 koodi+="1";
-            } else 
+            } else {
                 koodi+="0";
+            }
         }
         return koodi;
     }
@@ -132,7 +120,9 @@ public class Huffman {
 
 		int data = 0;
 		for (int i = 0; i < 8; i++) {
-			if (bits[i]) data += (1 << (7-i));
+			if (bits[i]) {
+                            data += (1 << (7-i));
+                        }
 		}
 		return data;
     }

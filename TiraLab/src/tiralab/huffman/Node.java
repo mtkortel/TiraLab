@@ -35,6 +35,13 @@ public class Node {
         this.määrä  = määrä;
         this.lehti = true;
     }
+    public Node(char merkki, String koodi){
+        this.lehti = true;
+        this.merkki = merkki;
+        this.bits = koodi;
+        this.lehti = true;
+    }
+    
     /**
      * Konstruktori binääripuulle, ei lehdelle
      */
