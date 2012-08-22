@@ -121,7 +121,7 @@ public class Purkaja {
             //HashMap<String, String> kartta = new HashMap<String, String>();
             StringArray kartta = new StringArray();
             
-            Map<Integer, String> kartta2 = new java.util.HashMap<Integer, String>();
+            //Map<Integer, String> kartta2 = new java.util.HashMap<Integer, String>();
             
             String koodi = "";
             //List<Integer> intKoodit = new ArrayList<Integer>();
@@ -140,24 +140,35 @@ public class Purkaja {
             */
             
             String header  ="";
-            for(int i=0; i<lista.size(); i=i+4){
+            for(int i=0; i<lista.size(); i=i+5){
                 int i1 = lista.get(i);
                 int i2 = lista.get(i+1);
                 int i3 = lista.get(i+2);
                 int i4 = lista.get(i+3);
+                int i5 = lista.get(i+4);
                 
-                if (i1 == 255 && i2 == 255 && i3 == 255 && i4 == 255){
-                    codeStart = i+4;
+                if (i1 == 255 && i2 == 255 && i3 == 255 && i4 == 255 && i5 == 255){
+                    codeStart = i+5;
                     i = lista.size();
                 } else {
-                    String kode1 = getBitArray(i2);
-                    String kode2 = getBitArray(i3);
-                    String kode3 = getBitArray(i4);
+                    String mer1 = getBitArray(i1);
+                    String mer2 = getBitArray(i2);
+                    String kode1 = getBitArray(i3);
+                    String kode2 = getBitArray(i4);
+                    String kode3 = getBitArray(i5);
                     String code = "";
-                    if (kode1.equals("0")){
-                        code = getBitArray(i3);
+                    String merkki = "";
+                    if (mer1.equals("0")){
+                        merkki = mer2;
                     } else {
-                        code = getBitArray(i2);
+                        merkki = mer1 + mer2;
+                    }
+                    
+                    
+                    if (kode1.equals("0")){
+                        code = getBitArray(i4);
+                    } else {
+                        code = getBitArray(i3);
                         for (int mi = kode2.length(); mi <8; mi++){
                             code += "0";
                         }
@@ -165,13 +176,21 @@ public class Purkaja {
                             code += "0";
                         }
                         
-                        code += getBitArray(i3);
                         code += getBitArray(i4);
+                        code += getBitArray(i5);
                         
                     }
                     /*
                      * Etsitään erotinmerkki
                      */
+                    String merkk="";
+                    for(int ci=0; ci < merkki.length(); ci++){
+                        if (merkki.charAt(ci) == '0'){
+                            merkk = merkki.substring(ci+1);
+                            ci = merkki.length();
+                        }
+                    }
+                    
                     String kode="";
                     for(int ci=0; ci < code.length(); ci++){
                         if (code.charAt(ci) == '0'){
@@ -179,9 +198,12 @@ public class Purkaja {
                             ci = code.length();
                         }
                     }
-                    String s = "" + kode + " " + i1;
+                    String s = "" + kode + " " + i1 + ""  + i2;
                     //System.out.println((char)i1 + " Code: " + code + " kode " + kode+ " " + Integer.toBinaryString(Integer.parseInt(kode, 2)));
-                    kartta.put(kode, String.valueOf((char)i1));
+                    //if ((char)i1 == 'h'){
+                        System.out.println(merkk + " " + kode);
+                    //}
+                    kartta.put(kode, merkk);
                     //System.out.println(String.valueOf((char)i1 + " " + kode + " " ));
                    
                 }

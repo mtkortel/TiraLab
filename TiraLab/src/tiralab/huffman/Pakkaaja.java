@@ -61,7 +61,8 @@ public class Pakkaaja {
     
     
     /**
-     * Metodi lukee tiedoston riveittäin
+     * Metodi lukee tiedoston riveittäin ja tekee samalla taulukon merkkien
+     * esiintymismääristä.
      * 
      * @param tiedosto 
      * @return tiedoston sisältä teksti merkkijonona
@@ -76,99 +77,11 @@ public class Pakkaaja {
             if (num >= 0 && num < MerkkienMäärä){
                 sb.append((char)b); 
                 kerrat[num]++;
-                //System.out.print((char)b);
-            } else {
-                //System.out.println("Virhe: " + num);
-                virheet++;
             }
         }
         return sb.toString();
-        //File file = new File(tiedosto);
-        //FileInputStream fs = new FileInputStream(tiedosto);
-        //DataInputStream ds = new DataInputStream(new BufferedInputStream(fs));
-        /*
-        File f = new File(tiedosto);
-        double kertoja = f.length()/buffer_size;
-        
-        FileReader file = new FileReader(new File(tiedosto));
-        BufferedReader ds = new BufferedReader(file);
-        System.out.println("Hakemisto: " + file.getCanonicalPath());
-        byte[] buf = new byte[2048];
-        char[] cbuf = new char[buffer_size];
-        char chr = 0;
-        int c = -1;
-        int n=0;
-        String boolString="";
-        
-        try{
-            int laskuri = 0;
-            Calendar c1 = Calendar.getInstance();
-            while((n = ds.read(cbuf)) != -1){
-                Calendar c2 = Calendar.getInstance();
-                laskuri++;
-                System.out.println(laskuri+"/"+kertoja + " - kesto " +
-                        (c2.getTimeInMillis() - c1.getTimeInMillis()) + " ms.");
-                c1 = c2;
-                //while((c = fs.read()) != -1){
-                //System.out.println((char)n);
-                //boolString += String.valueOf((char)n);
-                int luku = 0;
-                for(int i=0; i < cbuf.length; i++){
-                    if (cbuf[i]!=0){
-                        c = cbuf[i];
-                        if (c <= 255){
-                            luku++;
-                            //if (laskuri >= 2047) {
-
-                            //}
-                            //intList.add(c);
-                            chr = (char)c;
-                            //System.out.println(chr);
-                            //boolString = getBitArray(c);
-                            //System.out.print(c);
-                            //Huffman.pakattu += c + " ";
-                            //System.out.print(chr + " " + c + " ");
-                            kerrat[c]++;
-                            boolString += String.valueOf(chr);
-                            if (luku%100 == 0){
-                                System.out.println("Valmis " + luku + " riviä");
-                            }
-                        }
-                    }
-                }
-            }
-        
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            //fs.close();
-        }
-         
-        //System.out.println(boolString);
-        return boolString;
-        */
     }
-    /**
-     * Tekee tekstistä taulukon merkkien ilmenemismäärien mukaan
-     * 
-     * @param teksti
-     * @return 
-     */
-    private int[] teeKertaTaulukko(String teksti){
-        int[]  kerrat = new int[MerkkienMäärä];
-        
-        for(int i = 0; i < teksti.length(); i++){
-            kerrat[teksti.toCharArray()[i]]++; // lisätään esiintymiskerta merkille
-            
-        }
-        /*
-        for(int i=0; i< kerrat.length; i++){
-            if (kerrat[i]>0){
-                
-            }
-        }
-        */ 
-        return kerrat;
-    }
+ 
     /**
      * Rakentaa PriorityQueue jonon esiintymismäärien mukaan
      * 
@@ -181,8 +94,6 @@ public class Pakkaaja {
         for (int i = 0; i < MerkkienMäärä; i++){
             if (kerrat[i] > 0){
                 queue.add(new Node((char)i, kerrat[i]));
-                //System.out.println("Priority Queue size: " + queue.size());
-                //System.out.println((char)i + " " + kerrat[i]);
             }
         }
         // Tehdään niin kauan kunnes jonossa on vain yksi jäljellä eli root
@@ -192,8 +103,6 @@ public class Pakkaaja {
             Node uusi = new Node(vasen, oikea);
             queue.add(uusi); // Lisätään uusi node jonoon
         }
-        // Palautta juuren eli ensimmäisen Noden
-        //return queue.remove();
         return queue.poll();
     }
 
@@ -205,16 +114,10 @@ public class Pakkaaja {
     private void pakataan(String tiedosto) {
         try{
             String teksti = lueTekstiTiedosto(tiedosto);
-            System.out.println("Tämä koodataan: ");
-            System.out.println(teksti);
             // Tiedosto luettu loppuun rakennetaan puu
             Node huffman  = rakennaPuu(kerrat);
             päivitäHuffmanPuu(huffman, "0");
             rakennaContent(teksti, huffman);
-                        
-            
-            //rakennaHeader(huffman, "0");
-            
         } catch (Exception e){
             e.printStackTrace();
             System.out.println(e.getMessage());
@@ -233,6 +136,9 @@ public class Pakkaaja {
             nodes.put(String.valueOf(huffman.getMerkki()), huffman);
             merkistö.add(huffman.getMerkki());
             koodisto.add(huffman.getMäärä());
+            if (huffman.getMerkki() == 'h'){
+                System.out.println(huffman.getMerkki() + " " + huffman.getBits());
+            }
             return;
         } 
         päivitäHuffmanPuu(huffman.getVasen(), merkki + "0");
@@ -324,19 +230,30 @@ public class Pakkaaja {
                 String kbin ;//= koodisto.get(i);
                 Node tmpNode = nodes.get(String.valueOf(merkistö.get(i)));
                 kbin = tmpNode.getBits();
+                String mbin1="";
+                String mbin2="";
                 String kbin1="";
                 String kbin2="";
                 String kbin3="";
                 
-                if (mbin.length() >= 8){
+                if (mbin.length() > 8){
                     System.out.println("Koko ongelma: " + merkistö.get(i) + " " + mbin.length());
                 }
                 
-                while (mbin.length() < 8){
-                    mbin = "0" + mbin;
-                } 
+                //while (mbin.length() < 16){
+                  //  mbin = "0" + mbin;
+                //} 
                 
                 boolean eka=true;
+                while (mbin.length() < 24){
+                    if (eka){
+                        mbin="0" + kbin;
+                        eka=false;
+                    } else {
+                        mbin = "1" + kbin;
+                    }
+                }
+                eka=true;
                 while (kbin.length() < 24){
                     if (eka){
                         kbin="0" + kbin;
@@ -345,13 +262,17 @@ public class Pakkaaja {
                         kbin = "1" + kbin;
                     }
                 }
-                
+                mbin1 = mbin.substring(0,8);
+                mbin2 = mbin.substring(8);
                 kbin1 = kbin.substring(0, 8);
                 kbin2 = kbin.substring(8, 16);
                 kbin3 = kbin.substring(16);
                 
                 //String tmp = mbin + kbin;
-                int me = strToInt(mbin); // Merkki
+                int me = strToInt(mbin1); // Merkki
+                header+=Purkaja.getBitArray(me);
+                fs.write(me);
+                me = strToInt(mbin2); // Merkki
                 header+=Purkaja.getBitArray(me);
                 fs.write(me);
                 me = strToInt(kbin1); // Ensimmäiset 8 bittiä
@@ -364,12 +285,19 @@ public class Pakkaaja {
                 header+=Purkaja.getBitArray(me);
                 fs.write(me);
                 
-                //System.out.println(kbin + " " + merkistö.get(i));
             }
+            Huffman.pakattu = header;
+            
             fs.write(255);
             fs.write(255);
             fs.write(255);
             fs.write(255);
+            fs.write(255);
+            Huffman.pakattu += "11111111";
+            Huffman.pakattu += "11111111";
+            Huffman.pakattu += "11111111";
+            Huffman.pakattu += "11111111";
+            Huffman.pakattu += "11111111";
             
             String tmp="";
             for (int i=0; i < koodit.size(); i++){
@@ -378,9 +306,6 @@ public class Pakkaaja {
                     tmp += kbin.charAt(j);
                 }
             }
-            int nro = 0;
-            int kerrat=0;
-            boolean[] bits = new boolean[8];
             int mk = 0;
             while (mk < tmp.length() ){
                 int tmk = mk+8;
@@ -399,7 +324,6 @@ public class Pakkaaja {
                 }
 		}
                 Huffman.pakattu += data + " ";
-                //os.write(me);
                 fs.write(data);
             }
         } catch (Exception e){
@@ -411,11 +335,10 @@ public class Pakkaaja {
         boolean[] bstr = new boolean[8];
         for(int j = 0; j < str.length(); j++){
                     if (str.charAt(j) == '1'){
-                        //bs.set(j, true);
                         bstr[j] = true;
-                    } else 
-                        //bs.set(j, false);
+                    } else {
                         bstr[j] = false;
+                    }
                 }
                 //boolean[] he1 = new boolean[8]; 
                 return Huffman.bitsToByte(bstr);

@@ -64,6 +64,9 @@ public class Huffman {
                 System.out.println("Puretun tiedoston koko       : " + tulos);
                 System.out.println("Koko alkuperäisestä          : " + df.format(ero) +"%");
             }
+            
+            System.out.println(pakattu);
+            System.out.println(purettu);
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
