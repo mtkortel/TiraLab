@@ -136,9 +136,9 @@ public class Pakkaaja {
             nodes.put(String.valueOf(huffman.getMerkki()), huffman);
             merkistö.add(huffman.getMerkki());
             koodisto.add(huffman.getMäärä());
-            if (huffman.getMerkki() == 'h'){
-                System.out.println(huffman.getMerkki() + " " + huffman.getBits());
-            }
+            //if (huffman.getMerkki() == 'h'){
+              //  System.out.println(huffman.getMerkki() + " " + huffman.getBits());
+            //}
             return;
         } 
         päivitäHuffmanPuu(huffman.getVasen(), merkki + "0");
@@ -230,8 +230,8 @@ public class Pakkaaja {
                 String kbin ;//= koodisto.get(i);
                 Node tmpNode = nodes.get(String.valueOf(merkistö.get(i)));
                 kbin = tmpNode.getBits();
-                String mbin1="";
-                String mbin2="";
+                //String mbin1="";
+                //String mbin2="";
                 String kbin1="";
                 String kbin2="";
                 String kbin3="";
@@ -240,11 +240,11 @@ public class Pakkaaja {
                     System.out.println("Koko ongelma: " + merkistö.get(i) + " " + mbin.length());
                 }
                 
-                //while (mbin.length() < 16){
-                  //  mbin = "0" + mbin;
-                //} 
-                
+                while (mbin.length() < 8){
+                    mbin = "0" + mbin;
+                } 
                 boolean eka=true;
+                /*
                 while (mbin.length() < 24){
                     if (eka){
                         mbin="0" + kbin;
@@ -253,7 +253,8 @@ public class Pakkaaja {
                         mbin = "1" + kbin;
                     }
                 }
-                eka=true;
+                */ 
+                
                 while (kbin.length() < 24){
                     if (eka){
                         kbin="0" + kbin;
@@ -262,19 +263,18 @@ public class Pakkaaja {
                         kbin = "1" + kbin;
                     }
                 }
-                mbin1 = mbin.substring(0,8);
-                mbin2 = mbin.substring(8);
+                
                 kbin1 = kbin.substring(0, 8);
                 kbin2 = kbin.substring(8, 16);
                 kbin3 = kbin.substring(16);
                 
                 //String tmp = mbin + kbin;
-                int me = strToInt(mbin1); // Merkki
+                int me = strToInt(mbin); // Merkki
                 header+=Purkaja.getBitArray(me);
                 fs.write(me);
-                me = strToInt(mbin2); // Merkki
-                header+=Purkaja.getBitArray(me);
-                fs.write(me);
+                //me = strToInt(mbin2); // Merkki
+                //header+=Purkaja.getBitArray(me);
+                //fs.write(me);
                 me = strToInt(kbin1); // Ensimmäiset 8 bittiä
                 header+=Purkaja.getBitArray(me);
                 fs.write(me);
@@ -292,8 +292,6 @@ public class Pakkaaja {
             fs.write(255);
             fs.write(255);
             fs.write(255);
-            fs.write(255);
-            Huffman.pakattu += "11111111";
             Huffman.pakattu += "11111111";
             Huffman.pakattu += "11111111";
             Huffman.pakattu += "11111111";

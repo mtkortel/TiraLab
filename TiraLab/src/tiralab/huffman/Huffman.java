@@ -65,8 +65,13 @@ public class Huffman {
                 System.out.println("Koko alkuperäisestä          : " + df.format(ero) +"%");
             }
             
-            System.out.println(pakattu);
-            System.out.println(purettu);
+            //System.out.println(pakattu);
+            //System.out.println(purettu);
+            if (pakattu.equals(purettu)){
+                System.out.println("Samat");
+            } else {
+                System.out.println("Eri");
+            }
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
