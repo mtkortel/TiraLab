@@ -9,7 +9,13 @@ import java.io.*;
  * @author mkortelainen
  */
 public class FileUtils {
-    
+    public static void putBytesToFile(File file, byte[] bytes) throws FileNotFoundException, IOException{
+        FileOutputStream fos = null;
+        fos = new FileOutputStream(file);
+        fos.write(bytes);
+        fos.flush();
+        fos.close();
+    }
         // Returns the contents of the file in a byte array.
     public static byte[] getBytesFromFile(File file) throws IOException {
         InputStream is = null;

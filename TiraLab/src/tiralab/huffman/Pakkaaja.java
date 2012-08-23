@@ -218,6 +218,7 @@ public class Pakkaaja {
             pos = tiedosto.length();
         }
         String utied = tiedosto.substring(0, pos) + ".huf";
+        File file = new File(utied+"2");
         try{
             //File file = new File(utied);
             FileOutputStream fs = new FileOutputStream(utied);
@@ -344,6 +345,7 @@ public class Pakkaaja {
                 }
 		}
                 Huffman.pakattu += data + " ";
+                
                 fs.write(data);
             }
         } catch (Exception e){
@@ -364,5 +366,13 @@ public class Pakkaaja {
                 return Huffman.bitsToByte(bstr);
     }
 
+    public static byte[] intToByteArray(int value) {
+        byte[] b = new byte[8];
+        for (int i = 0; i < 8; i++) {
+            int offset = (b.length - 1 - i) * 8;
+            b[i] = (byte) ((value >>> offset) & 0xFF);
+        }
+    return b;
+    }
     
 }

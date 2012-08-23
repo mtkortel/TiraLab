@@ -45,6 +45,7 @@ public class Purkaja {
     private IntList lueTiedosto(String tiedosto) throws IOException{
         File file = new File(tiedosto);
         byte[] array = FileUtils.getBytesFromFile(file);
+        System.out.println("bytearray: " + array.length);
         StringBuilder sb = new StringBuilder();
         IntList lista = new IntList();
         for (byte b: array){
@@ -375,6 +376,15 @@ public class Purkaja {
          */
     }
 
+    public static byte[] intToByteArray(int a)
+    {
+        byte[] ret = new byte[4];
+        ret[0] = (byte) (a & 0xFF);   
+        ret[1] = (byte) ((a >> 8) & 0xFF);   
+        ret[2] = (byte) ((a >> 16) & 0xFF);   
+        ret[3] = (byte) ((a >> 24) & 0xFF);
+        return ret;
+    }
    public static String getBitArray(int charInt) {
         String bitString = Integer.toBinaryString(charInt);
         int j = bitString.length();
