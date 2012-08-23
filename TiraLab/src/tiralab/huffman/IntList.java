@@ -34,10 +34,10 @@ public class IntList {
         lista = tmp;
     }
     public int get(int i){
-        if (i < koko){
+        if (i <= koko){
             return lista[i];
         }
-        throw new IndexOutOfBoundsException("Haku yli indexin");
+        throw new IndexOutOfBoundsException("Haku yli indexin! Koko: " + koko + " haettu: " + i);
     }
     public int size(){
         return koko;

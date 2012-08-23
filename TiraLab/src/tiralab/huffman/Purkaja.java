@@ -6,8 +6,10 @@ package tiralab.huffman;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -116,8 +118,8 @@ public class Purkaja {
         Map<Integer, Integer> kerrat = new TreeMap<Integer, Integer>();
         Node puu=null;
         try{    
-            List<Integer> lista = luePurettavaTiedosto(tiedosto);
-            //IntList listat = lueTiedosto(tiedosto);
+            //List<Integer> lista = luePurettavaTiedosto(tiedosto);
+            IntList lista = lueTiedosto(tiedosto);
             //HashMap<String, String> kartta = new HashMap<String, String>();
             StringArray kartta = new StringArray();
             
@@ -140,11 +142,17 @@ public class Purkaja {
             */
             
             String header  ="";
-            for(int i=0; i<lista.size(); i=i+4){
+            List<String> li = new ArrayList<String>();
+            for(int i=0; i<lista.size()-4; i=i+4){
                 int i1 = lista.get(i);
                 int i2 = lista.get(i+1);
                 int i3 = lista.get(i+2);
                 int i4 = lista.get(i+3);
+                int ii1 = i1;
+                i1 = byteToInt(i1);
+                i2 = byteToInt(i2);
+                i3 = byteToInt(i3);
+                i4 = byteToInt(i4);
                 
                 if (i1 == 255 && i2 == 255 && i3 == 255 && i4 == 255 ){
                     codeStart = i+4;
@@ -154,7 +162,7 @@ public class Purkaja {
                     String kode2 = getBitArray(i3);
                     String kode3 = getBitArray(i4);
                     String code = "";
-                    
+                   // System.out.println((char)i1 + " " + i2 + " " + i3 + " "+ i4);
                     if (kode1.equals("0")){
                         code = getBitArray(i3);
                     } else {
@@ -183,7 +191,14 @@ public class Purkaja {
                     }
                     String s = "" + kode + " " + i1 + ""  + i2;
                     //System.out.println((char)i1 + " Code: " + code + " kode " + kode+ " " + Integer.toBinaryString(Integer.parseInt(kode, 2)));
-                    //if ((char)i1 == 'h'){
+                    if ((char)i1 == 'x'){
+                        //System.out.println("1- "+(char)i1 + ": " + kode);
+                        //System.out.println("2- "+(char)i1 + ": " + kode1+ " " + kode2+ " "+kode3);
+                        System.out.println("x- "+(char)i1 + ": " + i2+ " " + i3+ " "+i4);
+                        System.out.println("x- "+(char)ii1 + ": " + i2+ " " + i3+ " "+i4);
+                    }
+                    //li.add((char)i1 + ": " + kode1+ " " + kode2+ " "+kode3);
+                    li.add((char)i1 + ": " + kode);
                     //}
                     kartta.put(kode, String.valueOf((char)i1));
                     //System.out.println(String.valueOf((char)i1 + " " + kode + " " ));
@@ -192,6 +207,10 @@ public class Purkaja {
                 
                 //System.out.println(i1 + " " + i2 + " " + i3);
                 
+            }
+            Collections.sort(li);
+            for (String s: li){
+                //System.out.println(s);
             }
             // Koodattu teksti
             String tmp = "";
@@ -223,7 +242,7 @@ public class Purkaja {
                    // System.out.println(etsijä);
                 }
             }
-            //System.out.println(teksti);
+            System.out.println(teksti);
             kirjoitaTiedosto(tiedosto, teksti);
             /*
             for(String tstr: koodit){
@@ -523,6 +542,16 @@ public class Purkaja {
         }
         
         return n1;
+    }
+
+    private int byteToInt(int i1) {
+        int i=0;
+        if (i1 >= 0 && i1<= 127){
+            return i1;
+        } else {
+            i= 127+Math.abs(i1);
+        }
+        return i;
     }
     
 }

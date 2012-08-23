@@ -5,8 +5,11 @@
 package tiralab.huffman;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 //import java.util.HashMap;
 import java.util.PriorityQueue;
 import tiralab.huffman.rakenne.HashMap;
@@ -116,15 +119,16 @@ public class Pakkaaja {
             String teksti = lueTekstiTiedosto(tiedosto);
             // Tiedosto luettu loppuun rakennetaan puu
             Node huffman  = rakennaPuu(kerrat);
+            
             päivitäHuffmanPuu(huffman, "0");
+            //tulostaPuu(huffman);
             rakennaContent(teksti, huffman);
         } catch (Exception e){
             e.printStackTrace();
             System.out.println(e.getMessage());
         }
     }
-  
-    
+   
     /**
      * Päivitää Huffmanpuun bittiesityksen ja talleettaa sen nodeen.
      * @param huffman 
@@ -139,10 +143,14 @@ public class Pakkaaja {
             //if (huffman.getMerkki() == 'h'){
               //  System.out.println(huffman.getMerkki() + " " + huffman.getBits());
             //}
-            return;
         } 
-        päivitäHuffmanPuu(huffman.getVasen(), merkki + "0");
-        päivitäHuffmanPuu(huffman.getOikea(), merkki + "1");
+        if (huffman.getVasen() != null){
+            päivitäHuffmanPuu(huffman.getVasen(), merkki + "0");
+        }
+        if (huffman.getOikea() != null) {
+            päivitäHuffmanPuu(huffman.getOikea(), merkki + "1");
+        }
+        
     }
     /**
      * Käydään alkuperäinen teksti merkki merkiltä läpi ja muutetaan kirjain huffman koodiksi
@@ -225,6 +233,18 @@ public class Pakkaaja {
              * on 0 esim. oikea koodi 1110101 koodaus 1111111101110101
              */
             String header="";
+            /*
+            List<String> li = new ArrayList<String>();
+            for (int i=0; i < merkistö.size(); i++){
+                Node t = nodes.get(String.valueOf(merkistö.get(i)));
+                //System.out.println(merkistö.get(i) + " " + t.getBits());
+                li.add(merkistö.get(i) + " " + t.getBits());
+            }
+            Collections.sort(li);
+            for (String s: li){
+                System.out.println(s);
+            }
+            */
             for (int i=0; i < merkistö.size(); i++){
                 String mbin = Integer.toBinaryString(merkistö.get(i));
                 String kbin ;//= koodisto.get(i);
@@ -238,23 +258,14 @@ public class Pakkaaja {
                 
                 if (mbin.length() > 8){
                     System.out.println("Koko ongelma: " + merkistö.get(i) + " " + mbin.length());
+                    System.exit(-1);
                 }
                 
                 while (mbin.length() < 8){
                     mbin = "0" + mbin;
                 } 
                 boolean eka=true;
-                /*
-                while (mbin.length() < 24){
-                    if (eka){
-                        mbin="0" + kbin;
-                        eka=false;
-                    } else {
-                        mbin = "1" + kbin;
-                    }
-                }
-                */ 
-                
+                String tt = kbin;
                 while (kbin.length() < 24){
                     if (eka){
                         kbin="0" + kbin;
@@ -284,7 +295,18 @@ public class Pakkaaja {
                 me = strToInt(kbin3); // Kolmannet 6 bittiä
                 header+=Purkaja.getBitArray(me);
                 fs.write(me);
-                
+                if (merkistö.get(i) == 'x'){
+                    System.out.println("x: " + kbin + " " + kbin1 + " "+ kbin2 + " " + kbin3);
+                    System.out.println("x: " + kbin +" "+ strToInt(kbin1) +" "+ strToInt(kbin2) +" "+ strToInt(kbin3) );
+                }
+                /*
+                System.out.print(merkistö.get(i));
+                System.out.print(" ");
+                for (int j = kbin.length(); j < 25; j++){
+                    System.out.print(" ");
+                }
+                System.out.println(kbin);
+                */ 
             }
             Huffman.pakattu = header;
             
@@ -341,4 +363,6 @@ public class Pakkaaja {
                 //boolean[] he1 = new boolean[8]; 
                 return Huffman.bitsToByte(bstr);
     }
+
+    
 }
